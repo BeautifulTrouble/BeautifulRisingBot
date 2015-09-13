@@ -18,8 +18,13 @@ bot.on('text', function (msg) {
     // Start
     if (msg.text == '/start') {
         // Reset any custom menus
+        var opts = {
+            reply_markup: JSON.stringify({
+                hide_keyboard: true
+            })
+        };
         // Send introduction and menu options
-        bot.sendMessage(chatId, 'Introductory text');
+        bot.sendMessage(chatId, 'Introductory text', opts);
     }
 
     // Help
