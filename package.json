@@ -1,0 +1,23 @@
+{
+  "name": "BeautifulRisingBot",
+  "version": "1.0.0",
+  "description": "A Beautiful Rising Telegram Bot",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.13.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BeautifulTrouble/BeautifulRisingBot"
+  },
+  "author": "Phillip Smith <ps@phillipadsmith.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BeautifulTrouble/BeautifulRisingBot/issues"
+  },
+  "homepage": "https://github.com/BeautifulTrouble/BeautifulRisingBot"
+}
