@@ -28,6 +28,8 @@
 
 * `/menu` - Back to main menu
 
+* `/define` - Define the types of modules in the toolkit
+
 * `/search` - Search for a module
 
 ## Resource-listing navigation
