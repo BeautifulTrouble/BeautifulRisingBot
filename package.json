@@ -4,7 +4,8 @@
   "description": "A Beautiful Rising Telegram Bot",
   "main": "index.js",
   "dependencies": {
-    "express": "^4.13.3"
+    "node-telegram-bot-api": "^0.12.1",
+    "request": "^2.61.0"
   },
   "devDependencies": {},
   "scripts": {
