@@ -17,6 +17,8 @@ bot.on('text', function (msg) {
 
     // Start
     if (msg.text == '/start') {
+        // Reset any custom menus
+        // Send introduction and menu options
         bot.sendMessage(chatId, 'Introductory text');
     }
 
@@ -27,24 +29,42 @@ bot.on('text', function (msg) {
 
     // Settings
     if (msg.text == '/settings') {
+        // User-specific settings
         bot.sendMessage(chatId, 'Settings stub');
     }
 
     // Menu
     if (msg.text == '/menu') {
+        // Show the menu
         bot.sendMessage(chatId, 'Menu stub');
     }
 
     // Search
     if (msg.text == '/search') {
+        // Not implemented
         bot.sendMessage(chatId, 'Search stub');
     }
 
     // Tactics
     if (msg.text == '/tactics') {
-        bot.sendMessage(chatId, 'List Tactics stub');
+        // Get and list Tactics
+        // http://beautifultrouble.github.io/BeautifulRisingBot/tactics.json
+        var url = 'http://beautifultrouble.github.io/BeautifulRisingBot/tactics.json';
+        // From HTTP request!
+        request(url, function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+                console.log(body) // Show the HTML for the Google homepage.
+                var tactics = JSON.parse(body);
+                var reply_text = tactics.description + '\n';
+                reply_text    += 'Here is a list of the available Tactics:\n';
+                tactics.tactics.forEach(function(tactic) {
+                    reply_text += tactic.title + '\n';
+                });
+                bot.sendMessage(chatId, reply_text);
+            }
+        });
+        bot.sendMessage(chatId, 'Looking up Tactics...');
     }
-
 
     // Principles
     if (msg.text == '/principles') {
@@ -59,6 +79,34 @@ bot.on('text', function (msg) {
     // Big Ideas
     if (msg.text == '/stories') {
         bot.sendMessage(chatId, 'List Stories stub');
+    }
+
+    // TODO Generalize this
+    var getTactic = msg.text.match(/^\/tactic(\d+)$/);
+    var getPrinciple = msg.text.match(/^\/principle(\d+)$/);
+    var getBigidea = msg.text.match(/^\/bigidea(\d+)$/);
+    var getStory = msg.text.match(/^\/story(\d+)$/);
+    
+    if ( getTactic )  {
+        bot.sendMessage(chatId, "Looks like you're searching for " + tactic[1] );
+        // http://beautifultrouble.github.io/BeautifulRisingBot/tactics.json
+        var url = 'http://beautifultrouble.github.io/BeautifulRisingBot/tactics.json';
+        // From HTTP request!
+        request(url, function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+                var tactics = JSON.parse(body);
+                // Search for the tactic ID in the array of tactics
+                var id = tactic[1];
+                var found = tactics.tactics.reduce(function(found, el){
+                    return found || (el.id == id && el);
+                },null);
+                if ( found ) { 
+                    bot.sendMessage(chatId, found.title );
+                } else { 
+                    bot.sendMessage(chatId, "Did not find a Tactic matching that ID" );
+                }
+            }
+        });
     }
 
 });
