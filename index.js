@@ -1,4 +1,5 @@
 var TelegramBot = require('node-telegram-bot-api');
+var Handlebars = require('handlebars');
 var request = require('request');
 
 var options = {
@@ -60,11 +61,7 @@ bot.on('text', function (msg) {
             if (!error && response.statusCode == 200) {
                 console.log(body) // Show the HTML for the Google homepage.
                 var tactics = JSON.parse(body);
-                var reply_text = tactics.description + '\n';
-                reply_text    += 'Here is a list of the available Tactics:\n';
-                tactics.tactics.forEach(function(tactic) {
-                    reply_text += tactic.title + '\n';
-                });
+                var reply_text = TacticsTemplate(tactics);
                 bot.sendMessage(chatId, reply_text);
             }
         });
@@ -115,3 +112,8 @@ bot.on('text', function (msg) {
     }
 
 });
+
+var TacticsSource = "Tactics are fascinating\n" + 
+    "They span many lines\n" + 
+    "{{#tactics}}* {{title}}\n{{/tactics}}";
+var TacticsTemplate = Handlebars.compile(TacticsSource);
