@@ -1,0 +1,10 @@
+{
+    "description": "Tactics description",
+    "tactics": [
+        { "id": "1000", "title": "Some tactic with ID 1000" },
+        { "id": "1001", "title": "Some tactic with ID 1001" },
+        { "id": "1002", "title": "Some tactic with ID 1002" },
+        { "id": "1003", "title": "Some tactic with ID 1003" },
+        { "id": "1004", "title": "Some tactic with ID 1004" }
+    ]
+}
