@@ -88,7 +88,7 @@ bot.on('text', function (msg) {
     var getStory = msg.text.match(/^\/story(\d+)$/);
     
     if ( getTactic )  {
-        bot.sendMessage(chatId, "Looks like you're searching for " + tactic[1] );
+        bot.sendMessage(chatId, "Looks like you're searching for " + getTactic[1] );
         // http://beautifultrouble.github.io/BeautifulRisingBot/tactics.json
         var url = 'http://beautifultrouble.github.io/BeautifulRisingBot/tactics.json';
         // From HTTP request!
@@ -96,7 +96,7 @@ bot.on('text', function (msg) {
             if (!error && response.statusCode == 200) {
                 var tactics = JSON.parse(body);
                 // Search for the tactic ID in the array of tactics
-                var id = tactic[1];
+                var id = getTactic[1];
                 var found = tactics.tactics.reduce(function(found, el){
                     return found || (el.id == id && el);
                 },null);
