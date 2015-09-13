@@ -19,13 +19,25 @@ bot.on('text', function (msg) {
     // Start
     if (msg.text == '/start') {
         // Reset any custom menus
+        //var opts = {
+            //reply_markup: JSON.stringify({
+                //hide_keyboard: true
+            //})
+        //};
         var opts = {
             reply_markup: JSON.stringify({
-                hide_keyboard: true
+                one_time_keyboard: true,
+                resize_keyboard: true,
+                keyboard: [
+                    ['/tactics', '/principles'],
+                    ['/bigideas', '/stories'],
+                ],
             })
         };
+        var reply_text = StartTemplate(msg.chat);
         // Send introduction and menu options
-        bot.sendMessage(chatId, 'Introductory text', opts);
+        
+        bot.sendMessage(chatId, reply_text, opts);
     }
 
     // Help
@@ -113,6 +125,19 @@ bot.on('text', function (msg) {
 
 });
 
+// Start template
+var StartSource = "Hello {{first_name}} {{last_name}}\n" +
+    "You've reached the Beatufiul Rising Bot!\n" +
+    "\n" +
+    "This bot can speak English, Arabic, and Esperanto.\n" +
+    "You can change this with /settings\n" +
+    "\n" +
+    "You can use /help to get a list of all commands.\n" +
+    "\n" +
+    "You can start by choosing one of the avaialble types of resources on the keyboard below:";
+var StartTemplate = Handlebars.compile(StartSource);
+
 var TacticsSource = "{{description}}\n" + 
     "{{#tactics}}* {{title}} Read more: /tactic{{id}} \n{{/tactics}}";
 var TacticsTemplate = Handlebars.compile(TacticsSource);
+

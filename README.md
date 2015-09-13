@@ -13,6 +13,7 @@
 - [x] Add Bot photo
 - [ ] Add Bot commands to BotFather
 - [ ] Add Bot /setjoingroup /setprivacy
+- [ ] Add some emoji to make things cute and cuddly
 
 ## Required commands / endpoints
 
