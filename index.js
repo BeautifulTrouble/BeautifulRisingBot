@@ -113,7 +113,6 @@ bot.on('text', function (msg) {
 
 });
 
-var TacticsSource = "Tactics are fascinating\n" + 
-    "They span many lines\n" + 
-    "{{#tactics}}* {{title}}\n{{/tactics}}";
+var TacticsSource = "{{description}}\n" + 
+    "{{#tactics}}* {{title}} Read more: /tactic{{id}} \n{{/tactics}}";
 var TacticsTemplate = Handlebars.compile(TacticsSource);
