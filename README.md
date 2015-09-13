@@ -2,6 +2,18 @@
 
 > A Beautiful Rising Bot for Telegram
 
+## TODO 
+
+- [ ] Add required commands (start, help, settings)
+- [ ] Add top-level navigation (menu, search)
+- [ ] Add resource listing commands
+- [ ] Add all getResource commands
+- [ ] Stub out resource action commands (more, save, share)
+- [x] Add Bot description
+- [x] Add Bot photo
+- [ ] Add Bot commands to BotFather
+- [ ] Add Bot /setjoingroup /setprivacy
+
 ## Required commands / endpoints
 
 * `/start`
