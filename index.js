@@ -155,7 +155,7 @@ var StartTemplate = Handlebars.compile(StartSource);
 
 // Tactics list
 var TacticsSource = "Tactics available:\n" + 
-    "{{#posts}}* {{title}} (/tactic{{id}}) \n{{/posts}}";
+    "{{#posts}}{{title}} \n /tactic{{id}}) \n\n{{/posts}}";
 var TacticsTemplate = Handlebars.compile(TacticsSource);
 
 // Tactic detail
