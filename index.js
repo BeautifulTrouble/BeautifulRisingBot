@@ -127,19 +127,17 @@ bot.on('text', function (msg) {
         } else { 
             bot.sendMessage(chatId, "Did not find a Tactic matching that ID" );
         }
-        
-        //var photo_url = found.attachments[0].images.thumbnail.url;
-        var photo_url = found.attachments[0].url; 
-        var caption = found.attachments[0].caption;
+
         // Get a photo
+        var photo_url = encodeURI(found.attachments[0].images.large.url);
+        var caption = found.attachments[0].caption;
         request(photo_url, function (error, response, body) {
             if (!error && response.statusCode == 200) {
-                //console.log(body);
+                // TODO actually upload, then send the photo
                 //bot.sendPhoto(chatId, body, {caption: caption});
                 bot.sendMessage(chatId, photo_url + "\n" + caption );
             }
         });
-
     }
 });
 
