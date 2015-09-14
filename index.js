@@ -12,6 +12,9 @@ var bot = new TelegramBot(token, options);
 bot.getMe().then(function (me) {
     console.log('Hi my name is %s!', me.username);
 });
+
+var tactics;
+
 bot.on('text', function (msg) {
     console.log(msg);
     var chatId = msg.chat.id;
@@ -63,16 +66,18 @@ bot.on('text', function (msg) {
         bot.sendMessage(chatId, 'Search stub');
     }
 
+    // Let's save tactics once requested as the payload is large
     // Tactics
     if (msg.text == '/tactics') {
         // Get and list Tactics
         // http://beautifultrouble.github.io/BeautifulRisingBot/tactics.json
-        var url = 'http://beautifultrouble.github.io/BeautifulRisingBot/tactics.json';
+        //var url = 'http://beautifultrouble.github.io/BeautifulRisingBot/tactics.json';
+        var url = 'http://beautifultrouble.org/api/get_recent_posts/?custom_fields=related_tactics,related_principles,related_theories,related_case_studies,related_practitioners&count=200&post_type=bt_tactic';
         // From HTTP request!
         request(url, function (error, response, body) {
             if (!error && response.statusCode == 200) {
-                console.log(body) // Show the HTML for the Google homepage.
-                var tactics = JSON.parse(body);
+                // Assign to global variable for now
+                tactics = JSON.parse(body);
                 var reply_text = TacticsTemplate(tactics);
                 bot.sendMessage(chatId, reply_text);
             }
@@ -102,27 +107,40 @@ bot.on('text', function (msg) {
     var getStory = msg.text.match(/^\/story(\d+)$/);
     
     if ( getTactic )  {
-        bot.sendMessage(chatId, "Looks like you're searching for " + getTactic[1] );
-        // http://beautifultrouble.github.io/BeautifulRisingBot/tactics.json
-        var url = 'http://beautifultrouble.github.io/BeautifulRisingBot/tactics.json';
-        // From HTTP request!
-        request(url, function (error, response, body) {
+        var id = getTactic[1];
+        var found = tactics.posts.reduce(function(found, el){
+    return found || (el.id == id && el);
+},null);
+        if ( found ) { 
+        var opts = {
+            reply_markup: JSON.stringify({
+                one_time_keyboard: true,
+                resize_keyboard: true,
+                keyboard: [
+                    ['Full Read', 'Media'],
+                    ['Challenges', 'Campaigns']
+                ],
+            })
+        };
+        var reply_text = TacticDetailTemplate(found);
+        bot.sendMessage(chatId, reply_text, opts );
+        } else { 
+            bot.sendMessage(chatId, "Did not find a Tactic matching that ID" );
+        }
+        
+        //var photo_url = found.attachments[0].images.thumbnail.url;
+        var photo_url = found.attachments[0].url; 
+        var caption = found.attachments[0].caption;
+        // Get a photo
+        request(photo_url, function (error, response, body) {
             if (!error && response.statusCode == 200) {
-                var tactics = JSON.parse(body);
-                // Search for the tactic ID in the array of tactics
-                var id = getTactic[1];
-                var found = tactics.tactics.reduce(function(found, el){
-                    return found || (el.id == id && el);
-                },null);
-                if ( found ) { 
-                    bot.sendMessage(chatId, found.title );
-                } else { 
-                    bot.sendMessage(chatId, "Did not find a Tactic matching that ID" );
-                }
+                //console.log(body);
+                //bot.sendPhoto(chatId, body, {caption: caption});
+                bot.sendMessage(chatId, photo_url + "\n" + caption );
             }
         });
-    }
 
+    }
 });
 
 // Start template
@@ -137,7 +155,13 @@ var StartSource = "Hello {{first_name}} {{last_name}}\n" +
     "You can start by choosing one of the avaialble types of resources on the keyboard below:";
 var StartTemplate = Handlebars.compile(StartSource);
 
-var TacticsSource = "{{description}}\n" + 
-    "{{#tactics}}* {{title}} Read more: /tactic{{id}} \n{{/tactics}}";
+// Tactics list
+var TacticsSource = "Tactics available:\n" + 
+    "{{#posts}}* {{title}} (/tactic{{id}}) \n{{/posts}}";
 var TacticsTemplate = Handlebars.compile(TacticsSource);
+
+// Tactic detail
+var TacticDetailSource = "{{title}}\n" + 
+    "{{excerpt}}\n";
+var TacticDetailTemplate = Handlebars.compile(TacticDetailSource);
 
