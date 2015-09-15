@@ -54,6 +54,13 @@ bot.on('text', function (msg) {
         bot.sendMessage(chatId, 'Settings stub');
     }
 
+    // Define
+    if (msg.text == '/define') {
+        // Show the menu
+        var reply_text = DefineTemplate(msg.chat);
+        bot.sendMessage(chatId, reply_text);
+    }
+
     // Menu
     if (msg.text == '/menu') {
         // Show the menu
@@ -150,7 +157,8 @@ var StartSource = "Hello {{first_name}} {{last_name}}\n" +
     "\n" +
     "You can use /help to get a list of all commands.\n" +
     "\n" +
-    "You can start by choosing one of the avaialble types of resources on the keyboard below:";
+    "You can start by choosing one of the avaialble types of resources on the keyboard below, " +
+    "or type /define to get a definition of what's avaialble";
 var StartTemplate = Handlebars.compile(StartSource);
 
 // Tactics list
@@ -163,3 +171,5 @@ var TacticDetailSource = "{{title}}\n" +
     "{{excerpt}}\n";
 var TacticDetailTemplate = Handlebars.compile(TacticDetailSource);
 
+var DefineSource = "Okay, {{first_name}} {{last_name}}, let me help: A tactic is a specific form of creative action, such as a flash mob or an occupation | A Principle is a design guideline for movement building and action planning | Big Ideas are big-picture concept and ideas that help us understand how the world works and how we might go about changing it. | Finally stories of resistance & change are capsules of successful and instructive creative actions, useful for illustrating how principles, tactics and big ideas can be successfully applied in practice. \n\n Would you like to access /tactics /principles /big ideas or /stories."
+var DefineTemplate = Handlebars.compile(DefineSource);
