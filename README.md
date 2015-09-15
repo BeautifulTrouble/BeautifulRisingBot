@@ -4,6 +4,7 @@
 
 ## TODO 
 
+- [ ] Explore the Trello API options
 - [ ] Add required commands (start, help, settings)
 - [ ] Add top-level navigation (menu, search)
 - [ ] Add resource listing commands
