@@ -149,7 +149,7 @@ bot.on('text', function (msg) {
 });
 
 // Start template
-var StartSource = "Hello {{first_name}} {{last_name}}\n" +
+var StartSource = "Hello {{first_name}} {{last_name}},\n" +
     "You've reached the Beatufiul Rising Bot!\n" +
     "\n" +
     "This bot can speak English, Arabic, and Esperanto.\n" +
@@ -158,7 +158,8 @@ var StartSource = "Hello {{first_name}} {{last_name}}\n" +
     "You can use /help to get a list of all commands.\n" +
     "\n" +
     "You can start by choosing one of the avaialble types of resources on the keyboard below, " +
-    "or type /define to get a definition of what's avaialble";
+    "or type /define to get a definition of what's avaialble" + 
+    "\n\nNOTE: Only **tactics** are available in this demo!";
 var StartTemplate = Handlebars.compile(StartSource);
 
 // Tactics list
