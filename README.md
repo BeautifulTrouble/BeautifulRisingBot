@@ -4,11 +4,11 @@
 
 ## TODO 
 
-- [ ] Explore the Trello API options
+- [x] Explore the Trello API options
 - [ ] Add required commands (start, help, settings)
 - [ ] Add top-level navigation (menu, search)
 - [ ] Add resource listing commands
-- [ ] Add all getResource commands
+- [x] Add all getResource commands
 - [ ] Stub out resource action commands (more, save, share)
 - [x] Add Bot description
 - [x] Add Bot photo
