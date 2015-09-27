@@ -59,7 +59,7 @@ bot.on('text', function (msg) {
                 resize_keyboard: true,
                 keyboard: [
                     ['/tactics', '/principles'],
-                    ['/bigideas', '/stories'],
+                    ['/big_ideas', '/stories'],
                 ],
             })
         };
