@@ -16,6 +16,8 @@
 - [ ] Add Bot /setjoingroup /setprivacy
 - [ ] Add some emoji to make things cute and cuddly
 
+- [ ] Once MVP is "done," migrate to [bot with plugins approach](https://github.com/crisbal/Node-Telegram-Bot) 
+
 ## Required commands / endpoints
 
 * `/start`
