@@ -13,7 +13,7 @@
 - [x] Stub out resource action commands (more, save, share)
 - [x] Add Bot description
 - [x] Add Bot photo
-- [ ] Add Bot commands to BotFather
+- [x] Add Bot commands to BotFather
 - [ ] Add Bot /setjoingroup /setprivacy
 - [ ] Add some emoji to make things cute and cuddly
 
