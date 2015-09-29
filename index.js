@@ -73,7 +73,8 @@ bot.on('text', function (msg) {
 
     // Help
     if (msg.text == '/help') {
-        bot.sendMessage(chatId, 'Help text');
+        var reply_text = HelpTemplate(msg.chat);
+        bot.sendMessage(chatId, reply_text, opts);
     }
 
     // Settings
@@ -84,15 +85,16 @@ bot.on('text', function (msg) {
 
     // Define
     if (msg.text == '/define') {
-        // Show the menu
+        // Define the terms
         var reply_text = DefineTemplate(msg.chat);
-        bot.sendMessage(chatId, reply_text);
+        bot.sendMessage(chatId, reply_text, opts);
     }
 
     // Menu
     if (msg.text == '/menu') {
         // Show the menu
-        bot.sendMessage(chatId, 'Menu stub');
+        var reply_text = MenuTemplate(msg.chat);
+        bot.sendMessage(chatId, reply_text, opts);
     }
 
     // Search
@@ -136,6 +138,7 @@ bot.on('text', function (msg) {
             return found || (el.idShort == id && el);
         },null);
         if ( found ) { 
+            // Return a menu
             //var opts = {
                 //reply_markup: JSON.stringify({
                     //one_time_keyboard: true,
@@ -146,23 +149,13 @@ bot.on('text', function (msg) {
                     //],
                 //})
             //};
-            var reply_text = TacticDetailTemplate(found);
+            var reply_text = ModuleDetailTemplate(found);
+            // Send the menu
             //bot.sendMessage(chatId, reply_text, opts );
             bot.sendMessage(chatId, reply_text );
         } else { 
-            bot.sendMessage(chatId, "Did not find a Tactic matching that ID" );
+            bot.sendMessage(chatId, "Did not find a module or card matching that ID" );
         }
-
-        //// Get a photo
-        //var photo_url = encodeURI(found.attachments[0].images.large.url);
-        //var caption = found.attachments[0].caption;
-        //request(photo_url, function (error, response, body) {
-            //if (!error && response.statusCode == 200) {
-                //// TODO actually upload, then send the photo
-                ////bot.sendPhoto(chatId, body, {caption: caption});
-                //bot.sendMessage(chatId, photo_url + "\n" + caption );
-            //}
-        //});
     }
 
     // More
@@ -192,8 +185,11 @@ bot.on('text', function (msg) {
 });
 
 
+/////////////////////////////////
+//  HANDLEBARS TEMPLATES 
+/////////////////////////////////
 
-// Start template
+// Start
 var StartSource = "Hello {{first_name}} {{last_name}},\n" +
     "You've reached the Beautiful Rising Bot!\n" +
     "\n" +
@@ -206,16 +202,24 @@ var StartSource = "Hello {{first_name}} {{last_name}},\n" +
     "or type /define to get a definition of what's available";
 var StartTemplate = Handlebars.compile(StartSource);
 
-// Tactics list
+// Module (card) list
 var ModuleListSource = "{{#if cards.length}}{{moduleTypeName}} available:\n" + 
     "{{#cards}}* {{{name}}}: /{{idShort}}\n{{/cards}}" + 
     "{{else}}No {{moduleTypeName}} cards avaialble{{/if}}";
 var ModuleListTemplate = Handlebars.compile(ModuleListSource);
 
-// Tactic detail
-var TacticDetailSource = "{{{name}}}\n" + 
+// Module (card) detail
+var ModuleDetailSource = "{{{name}}}\n" + 
     "{{{desc}}}\n";
-var TacticDetailTemplate = Handlebars.compile(TacticDetailSource);
+var ModuleDetailTemplate = Handlebars.compile(ModuleDetailSource);
 
 var DefineSource = "Okay, {{first_name}} {{last_name}}, let me help: A tactic is a specific form of creative action, such as a flash mob or an occupation | A Principle is a design guideline for movement building and action planning | Big Ideas are big-picture concept and ideas that help us understand how the world works and how we might go about changing it. | Finally stories of resistance & change are capsules of successful and instructive creative actions, useful for illustrating how principles, tactics and big ideas can be successfully applied in practice. \n\n Would you like to access /tactics /principles /big_ideas or /stories."
 var DefineTemplate = Handlebars.compile(DefineSource);
+
+var HelpSource = "Okay, {{first_name}}, I can help. This is the help text... ";
+var HelpTemplate = Handlebars.compile(HelpSource);
+
+var MenuSource = "Here are all of the commands available: \n * To come\n";
+var MenuTemplate = Handlebars.compile(MenuSource);
+
+
