@@ -164,7 +164,34 @@ bot.on('text', function (msg) {
             //}
         //});
     }
+
+    // More
+    if (msg.text == '/more') {
+        // Not implemented
+        // text matching /more\d+
+        // Returns more information (a list of what's avaialble)
+        bot.sendMessage(chatId, 'More stub');
+    }
+    // Save
+    // text matching /save\d+
+    // Adds the module to a user-specific list of modules
+    // Data will be persisted in CouchDB
+    if (msg.text == '/save') {
+        // Not implemented
+        bot.sendMessage(chatId, 'Save stub');
+    }
+    // Share
+    // text matching /share\d+
+    // Provides options for sharing the module, e.g.:
+    // E-mail, social media, other chat applications
+    if (msg.text == '/share') {
+        // Not implemented
+        bot.sendMessage(chatId, 'Share stub');
+    }
+
 });
+
+
 
 // Start template
 var StartSource = "Hello {{first_name}} {{last_name}},\n" +
