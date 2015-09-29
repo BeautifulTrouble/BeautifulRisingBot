@@ -67,7 +67,7 @@ bot.on('text', function (msg) {
         };
         var reply_text = StartTemplate(msg.chat);
         // Send introduction and menu options
-
+        bot.sendMessage(chatId, 'Bot Version: ' + version );
         bot.sendMessage(chatId, reply_text, opts);
     }
 
