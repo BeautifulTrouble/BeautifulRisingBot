@@ -5,16 +5,17 @@ var Trello = require('node-trello');
 var _ = require('underscore');
 var slugify = require("underscore.string/slugify");
 var capitalize = require("underscore.string/capitalize");
+
+// Read the configuration
 var conf = require('./package.json');
+var version = conf.version;
 
 var trello_key = process.env.TRELLO_KEY || '';
 var trello_token = process.env.TRELLO_TOKEN || '';
-var version = conf.version;
-
 var t = new Trello(trello_key, trello_token);
 
+// Use Trello as the API for now, modules are cards
 // Lets just story the cards for now, as they don't change often
-
 var board = {}; // An object to hold the board's cards
 board.cards = []; // An array for the cards
 t.get("/1/boards/awhXkqQu/cards", { cards: "open" }, function(err, data) {
@@ -30,6 +31,7 @@ t.get("/1/boards/awhXkqQu/cards", { cards: "open" }, function(err, data) {
     });
 });
 
+// Telegram bot
 var options = {
     polling: true
 };
@@ -41,20 +43,13 @@ bot.getMe().then(function (me) {
     console.log('Hi my name is %s!', me.username);
 });
 
-var tactics;
-
+// Poll for messages from Telegram
 bot.on('text', function (msg) {
     console.log(msg);
     var chatId = msg.chat.id;
 
     // Start
     if (msg.text == '/start') {
-        // Reset any custom menus
-        //var opts = {
-        //reply_markup: JSON.stringify({
-        //hide_keyboard: true
-        //})
-        //};
         var opts = {
             reply_markup: JSON.stringify({
                 one_time_keyboard: true,
@@ -148,6 +143,7 @@ bot.on('text', function (msg) {
             return found || (el.idShort == id && el);
         },null);
         if ( found ) { 
+            // TODO implement these accessors
             // Return a menu
             //var opts = {
                 //reply_markup: JSON.stringify({
