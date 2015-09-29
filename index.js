@@ -97,10 +97,20 @@ bot.on('text', function (msg) {
         bot.sendMessage(chatId, reply_text, opts);
     }
 
-    // Search
+    // Search without a term
+    // TODO 
     if (msg.text == '/search') {
+        // Ask for a search term
+        //var reply_text = SearchTemplate(msg.chat);
+        //bot.sendMessage(chatId, reply_text, opts);
+    }
+
+    // Search with a term
+    var searchTerm = msg.text.match(/^\/search\s(.*)$/);
+    if (searchTerm) {
         // Not implemented
-        bot.sendMessage(chatId, 'Search stub');
+        // TODO implement simple array filter by name for now
+        bot.sendMessage(chatId, 'Searching for: ' + searchTerm[1] );
     }
 
     if (msg.text == '/stories' || msg.text == '/big_ideas' || msg.text == '/tactics' || msg.text == '/principles' ) {
