@@ -213,12 +213,12 @@ var StartSource = "Hello {{first_name}} {{last_name}},\n" +
     "You can use /help to get a list of all commands.\n" +
     "\n" +
     "You can start by choosing one of the available types of resources on the keyboard below, " +
-    "or type /define to get a definition of what's available";
+    "or type /define to get a definition of what's available. 😊";
 var StartTemplate = Handlebars.compile(StartSource);
 
 // Module (card) list
 var ModuleListSource = "{{#if cards.length}}{{moduleTypeName}} available:\n" + 
-    "{{#cards}}* {{{name}}}: /{{idShort}}\n{{/cards}}" + 
+    "{{#cards}}➡️ {{{name}}}: Type /{{idShort}} for more. \n{{/cards}}" + 
     "{{else}}No {{moduleTypeName}} cards avaialble{{/if}}";
 var ModuleListTemplate = Handlebars.compile(ModuleListSource);
 
@@ -227,7 +227,7 @@ var ModuleDetailSource = "{{{name}}}\n" +
     "{{{desc}}}\n";
 var ModuleDetailTemplate = Handlebars.compile(ModuleDetailSource);
 
-var DefineSource = "Okay, {{first_name}} {{last_name}}, let me help: A tactic is a specific form of creative action, such as a flash mob or an occupation | A Principle is a design guideline for movement building and action planning | Big Ideas are big-picture concept and ideas that help us understand how the world works and how we might go about changing it. | Finally stories of resistance & change are capsules of successful and instructive creative actions, useful for illustrating how principles, tactics and big ideas can be successfully applied in practice. \n\n Would you like to access /tactics /principles /big_ideas or /stories."
+var DefineSource = "Okay, {{first_name}}, let me help 👍: A tactic is a specific form of creative action, such as a flash mob or an occupation | A Principle is a design guideline for movement building and action planning | Big Ideas are big-picture concept and ideas that help us understand how the world works and how we might go about changing it. | Finally stories of resistance & change are capsules of successful and instructive creative actions, useful for illustrating how principles, tactics and big ideas can be successfully applied in practice. \n\n Would you like to access /tactics /principles /big_ideas or /stories ?"
 var DefineTemplate = Handlebars.compile(DefineSource);
 
 var HelpSource = "Okay, {{first_name}}, I can help. This is the help text... ";
@@ -239,7 +239,7 @@ var MenuTemplate = Handlebars.compile(MenuSource);
 
 // Module (card) search results
 var SearchResultsSource = "{{#if cards.length}}Matching cards for '{{searchTerm}}:\n" + 
-    "{{#cards}}* {{{name}}}: /{{idShort}}\n{{/cards}}" + 
+    "{{#cards}}➡️ {{{name}}}: Type /{{idShort}} for more. \n{{/cards}}" + 
     "{{else}}No matching cards found for {{searchTerm}}. 😪{{/if}}";
 var SearchResultsTemplate = Handlebars.compile(SearchResultsSource);
 
