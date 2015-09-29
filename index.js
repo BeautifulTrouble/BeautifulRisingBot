@@ -5,9 +5,11 @@ var Trello = require('node-trello');
 var _ = require('underscore');
 var slugify = require("underscore.string/slugify");
 var capitalize = require("underscore.string/capitalize");
+var conf = require('./package.json');
 
 var trello_key = process.env.TRELLO_KEY || '';
 var trello_token = process.env.TRELLO_TOKEN || '';
+var version = conf.version;
 
 var t = new Trello(trello_key, trello_token);
 
