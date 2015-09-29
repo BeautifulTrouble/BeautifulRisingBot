@@ -96,16 +96,24 @@ bot.on('text', function (msg) {
     // TODO 
     if (msg.text == '/search') {
         // Ask for a search term
-        //var reply_text = SearchTemplate(msg.chat);
-        //bot.sendMessage(chatId, reply_text, opts);
+        var reply_text = SearchEmptyTemplate(msg.chat);
+        bot.sendMessage(chatId, reply_text, opts);
     }
 
     // Search with a term
     var searchTerm = msg.text.match(/^\/search\s(.*)$/);
     if (searchTerm) {
-        // Not implemented
-        // TODO implement simple array filter by name for now
-        bot.sendMessage(chatId, 'Searching for: ' + searchTerm[1] );
+        searchRegExp = new RegExp(searchTerm[1] , 'i');
+         // Create a filtered collection of cards
+        var filteredList = {};
+        filteredList.searchTerm = searchTerm[1];
+        filteredList.cards = [];
+        filteredList.cards = board.cards.filter(function(card){
+            return searchRegExp.test(card.name);
+        });
+        //console.log(results);
+        var reply_text = SearchResultsTemplate(filteredList);
+        bot.sendMessage(chatId, reply_text, opts);
     }
 
     if (msg.text == '/stories' || msg.text == '/big_ideas' || msg.text == '/tactics' || msg.text == '/principles' ) {
@@ -229,3 +237,12 @@ var MenuSource = "Here are all of the commands available: \n * To come\n";
 var MenuTemplate = Handlebars.compile(MenuSource);
 
 
+// Module (card) search results
+var SearchResultsSource = "{{#if cards.length}}Matching cards for '{{searchTerm}}:\n" + 
+    "{{#cards}}* {{{name}}}: /{{idShort}}\n{{/cards}}" + 
+    "{{else}}No matching cards found for {{searchTerm}}. 😪{{/if}}";
+var SearchResultsTemplate = Handlebars.compile(SearchResultsSource);
+
+// Search is empty
+var SearchEmptySource   = "It doesn't look like you entered a search term. Try, for example, '/search topic'";
+var SearchEmptyTemplate = Handlebars.compile(SearchEmptySource);
