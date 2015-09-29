@@ -1,6 +1,6 @@
 {
   "name": "BeautifulRisingBot",
-  "version": "1.0.0",
+  "version": "0.0.2",
   "description": "A Beautiful Rising Telegram Bot",
   "main": "index.js",
   "dependencies": {
