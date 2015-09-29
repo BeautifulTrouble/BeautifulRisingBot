@@ -195,15 +195,15 @@ bot.on('text', function (msg) {
 
 // Start template
 var StartSource = "Hello {{first_name}} {{last_name}},\n" +
-    "You've reached the Beatufiul Rising Bot!\n" +
+    "You've reached the Beautiful Rising Bot!\n" +
     "\n" +
     "This bot can speak English, Arabic, and Esperanto.\n" +
-    "You can change this with /settings\n" +
+    "You can change this with /settings (not actually implemented yet)\n" +
     "\n" +
     "You can use /help to get a list of all commands.\n" +
     "\n" +
-    "You can start by choosing one of the avaialble types of resources on the keyboard below, " +
-    "or type /define to get a definition of what's avaialble";
+    "You can start by choosing one of the available types of resources on the keyboard below, " +
+    "or type /define to get a definition of what's available";
 var StartTemplate = Handlebars.compile(StartSource);
 
 // Tactics list
