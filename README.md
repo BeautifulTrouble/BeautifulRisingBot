@@ -4,6 +4,7 @@
 
 ## TODO 
 
+For v1.0.0
 - [x] Explore the Trello API options
 - [x] Output Bot version on /start
 - [x] Add required commands (start, help, settings)
@@ -14,9 +15,14 @@
 - [x] Add Bot description
 - [x] Add Bot photo
 - [x] Add Bot commands to BotFather
-- [ ] Add Bot /setjoingroup /setprivacy
 - [x] Add some emoji to make things cute and cuddly
+- [ ] Add Bot /setjoingroup /setprivacy
+- [ ] Respond to messages that don't match a command (e.g., "Hi")
+- [ ] Sending a card image if it exists
+- [ ] Simple session management to enable "Save" and other user-specific functionality, which will make some of the "returning user" map paths available.
+- [ ] Functionality specific to user testing in Bangladesh, Uganda, etc. I.e., recording full user sessions for later review
 
+For v2.0.0
 - [ ] Once MVP is "done," migrate to [bot with plugins approach](https://github.com/crisbal/Node-Telegram-Bot) 
 
 ## Required commands / endpoints
