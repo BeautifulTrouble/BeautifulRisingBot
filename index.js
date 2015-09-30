@@ -5,6 +5,7 @@ var Trello = require('node-trello');
 var _ = require('underscore');
 var slugify = require("underscore.string/slugify");
 var capitalize = require("underscore.string/capitalize");
+var archieml = require('archieml');
 
 // Read the configuration
 var conf = require('./package.json');
@@ -96,16 +97,24 @@ bot.on('text', function (msg) {
     // TODO 
     if (msg.text == '/search') {
         // Ask for a search term
-        //var reply_text = SearchTemplate(msg.chat);
-        //bot.sendMessage(chatId, reply_text, opts);
+        var reply_text = SearchEmptyTemplate(msg.chat);
+        bot.sendMessage(chatId, reply_text, opts);
     }
 
     // Search with a term
     var searchTerm = msg.text.match(/^\/search\s(.*)$/);
     if (searchTerm) {
-        // Not implemented
-        // TODO implement simple array filter by name for now
-        bot.sendMessage(chatId, 'Searching for: ' + searchTerm[1] );
+        searchRegExp = new RegExp(searchTerm[1] , 'i');
+         // Create a filtered collection of cards
+        var filteredList = {};
+        filteredList.searchTerm = searchTerm[1];
+        filteredList.cards = [];
+        filteredList.cards = board.cards.filter(function(card){
+            return searchRegExp.test(card.name);
+        });
+        //console.log(results);
+        var reply_text = SearchResultsTemplate(filteredList);
+        bot.sendMessage(chatId, reply_text, opts);
     }
 
     if (msg.text == '/stories' || msg.text == '/big_ideas' || msg.text == '/tactics' || msg.text == '/principles' ) {
@@ -155,10 +164,13 @@ bot.on('text', function (msg) {
                     //],
                 //})
             //};
+            console.log(found.desc);
+            var cardData = archieml.load(found.desc);
+            found.cardData = cardData;
             var reply_text = ModuleDetailTemplate(found);
             // Send the menu
             //bot.sendMessage(chatId, reply_text, opts );
-            bot.sendMessage(chatId, reply_text );
+            bot.sendMessage(chatId, reply_text, opts);
         } else { 
             bot.sendMessage(chatId, "Did not find a module or card matching that ID" );
         }
@@ -187,7 +199,6 @@ bot.on('text', function (msg) {
         // Not implemented
         bot.sendMessage(chatId, 'Share stub');
     }
-
 });
 
 
@@ -205,21 +216,24 @@ var StartSource = "Hello {{first_name}} {{last_name}},\n" +
     "You can use /help to get a list of all commands.\n" +
     "\n" +
     "You can start by choosing one of the available types of resources on the keyboard below, " +
-    "or type /define to get a definition of what's available";
+    "or type /define to get a definition of what's available. 😊";
 var StartTemplate = Handlebars.compile(StartSource);
 
 // Module (card) list
 var ModuleListSource = "{{#if cards.length}}{{moduleTypeName}} available:\n" + 
-    "{{#cards}}* {{{name}}}: /{{idShort}}\n{{/cards}}" + 
+    "{{#cards}}➡️ {{{name}}}: Type /{{idShort}} for more. \n{{/cards}}" + 
     "{{else}}No {{moduleTypeName}} cards avaialble{{/if}}";
 var ModuleListTemplate = Handlebars.compile(ModuleListSource);
 
 // Module (card) detail
 var ModuleDetailSource = "{{{name}}}\n" + 
-    "{{{desc}}}\n";
+    "{{#if cardData.in_sum}}{{{cardData.in_sum}}}\n" +
+    "By {{{cardData.author}}}\n" +
+    "Google Doc: {{cardData.g_doc}}\n" +
+    "{{else}}No card data available{{/if}}";
 var ModuleDetailTemplate = Handlebars.compile(ModuleDetailSource);
 
-var DefineSource = "Okay, {{first_name}} {{last_name}}, let me help: A tactic is a specific form of creative action, such as a flash mob or an occupation | A Principle is a design guideline for movement building and action planning | Big Ideas are big-picture concept and ideas that help us understand how the world works and how we might go about changing it. | Finally stories of resistance & change are capsules of successful and instructive creative actions, useful for illustrating how principles, tactics and big ideas can be successfully applied in practice. \n\n Would you like to access /tactics /principles /big_ideas or /stories."
+var DefineSource = "Okay, {{first_name}}, let me help 👍: A tactic is a specific form of creative action, such as a flash mob or an occupation | A Principle is a design guideline for movement building and action planning | Big Ideas are big-picture concept and ideas that help us understand how the world works and how we might go about changing it. | Finally stories of resistance & change are capsules of successful and instructive creative actions, useful for illustrating how principles, tactics and big ideas can be successfully applied in practice. \n\n Would you like to access /tactics /principles /big_ideas or /stories ?"
 var DefineTemplate = Handlebars.compile(DefineSource);
 
 var HelpSource = "Okay, {{first_name}}, I can help. This is the help text... ";
@@ -229,3 +243,12 @@ var MenuSource = "Here are all of the commands available: \n * To come\n";
 var MenuTemplate = Handlebars.compile(MenuSource);
 
 
+// Module (card) search results
+var SearchResultsSource = "{{#if cards.length}}Matching cards for '{{searchTerm}}:\n" + 
+    "{{#cards}}➡️ {{{name}}}: Type /{{idShort}} for more. \n{{/cards}}" + 
+    "{{else}}No matching cards found for {{searchTerm}}. 😪{{/if}}";
+var SearchResultsTemplate = Handlebars.compile(SearchResultsSource);
+
+// Search is empty
+var SearchEmptySource   = "It doesn't look like you entered a search term. Try, for example, '/search topic'";
+var SearchEmptyTemplate = Handlebars.compile(SearchEmptySource);
