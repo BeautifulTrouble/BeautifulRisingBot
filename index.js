@@ -5,6 +5,7 @@ var Trello = require('node-trello');
 var _ = require('underscore');
 var slugify = require("underscore.string/slugify");
 var capitalize = require("underscore.string/capitalize");
+var archieml = require('archieml');
 
 // Read the configuration
 var conf = require('./package.json');
@@ -163,6 +164,9 @@ bot.on('text', function (msg) {
                     //],
                 //})
             //};
+            console.log(found.desc);
+            var cardData = archieml.load(found.desc);
+            found.cardData = cardData;
             var reply_text = ModuleDetailTemplate(found);
             // Send the menu
             //bot.sendMessage(chatId, reply_text, opts );
@@ -224,7 +228,10 @@ var ModuleListTemplate = Handlebars.compile(ModuleListSource);
 
 // Module (card) detail
 var ModuleDetailSource = "{{{name}}}\n" + 
-    "{{{desc}}}\n";
+    "{{#if cardData.in_sum}}{{{cardData.in_sum}}}\n" +
+    "By {{{cardData.author}}}\n" +
+    "Google Doc: {{cardData.g_doc}}\n" +
+    "{{else}}No card data available{{/if}}";
 var ModuleDetailTemplate = Handlebars.compile(ModuleDetailSource);
 
 var DefineSource = "Okay, {{first_name}}, let me help 👍: A tactic is a specific form of creative action, such as a flash mob or an occupation | A Principle is a design guideline for movement building and action planning | Big Ideas are big-picture concept and ideas that help us understand how the world works and how we might go about changing it. | Finally stories of resistance & change are capsules of successful and instructive creative actions, useful for illustrating how principles, tactics and big ideas can be successfully applied in practice. \n\n Would you like to access /tactics /principles /big_ideas or /stories ?"
