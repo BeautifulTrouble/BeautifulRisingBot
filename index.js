@@ -198,6 +198,12 @@ bot.on('text', function (msg) {
     if (msg.text == '/share') {
         // Not implemented
         bot.sendMessage(chatId, 'Share stub');
+    } else {
+        // Didn't understand the command
+        var reply_text = CommandNotFoundTemplate(msg.chat);
+        // Send the menu
+        //bot.sendMessage(chatId, reply_text, opts );
+        bot.sendMessage(chatId, reply_text, opts);
     }
 });
 
@@ -252,3 +258,7 @@ var SearchResultsTemplate = Handlebars.compile(SearchResultsSource);
 // Search is empty
 var SearchEmptySource   = "It doesn't look like you entered a search term. Try, for example, '/search topic'";
 var SearchEmptyTemplate = Handlebars.compile(SearchEmptySource);
+
+// Command not found 
+var CommandNotFoundSource   = "I don't know how to respond to that command. Type /help for assistance with the commands";
+var CommandNotFoundTemplate = Handlebars.compile(CommandNotFoundSource);
