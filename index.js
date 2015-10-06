@@ -24,6 +24,19 @@ var t = new Trello(trello_key, trello_token);
 // Lets just story the cards for now, as they don't change often
 var board = {}; // An object to hold the board's cards
 board.cards = []; // An array for the cards
+// Load the cards when the app starts
+t.get("/1/boards/awhXkqQu/cards", { cards: "open" }, function(err, data) {
+    if (err) throw err;
+    data.forEach(function(el) {
+        // Add the labels as a property of the card object
+        el.labels.forEach(function(l) {
+            var label = l.name.toLowerCase();
+            label = label.replace(/\W/, '_');
+            el["label_" + label] = true;
+        });
+        board.cards.push(el);
+    });
+});
 
 // Telegram bot
 var options = {
@@ -52,7 +65,9 @@ bot.on('text', function (msg) {
 
     // Start
     if (msg.text == '/start') {
-        // Load or re-load the Trello cards
+        // Remove the old cards
+        board.cards = []
+        // Re-load the Trello cards
         t.get("/1/boards/awhXkqQu/cards", { cards: "open" }, function(err, data) {
             if (err) throw err;
             data.forEach(function(el) {
