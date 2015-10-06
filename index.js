@@ -216,11 +216,18 @@ bot.on('text', function (msg) {
     
     //var commands = msg.text.match(/start|help|menu|settings|tactics|principles/);
     //console.log(commands);
-    var commands = new RegExp('start|help|menu|define|search|settings|tactics|principles|stories|big_ideas|more|save|share', 'i')
+    console.log('something....');
+    var commands = new RegExp('start|help|menu|define|search|settings|tactics|principles|stories|big_ideas|more|save|share', 'i');
+    var module_ids  = /^\/\d+$/;
+    console.log(module_ids);
     if ( commands.test( msg.text ) === false ) {
-        // Didn't understand the command
-        var reply_text = CommandNotFoundTemplate(msg.chat);
-        bot.sendMessage(chatId, reply_text, opts);
+        console.log('command false');
+        if ( module_ids.test ( msg.text ) === false ) {
+            console.log('module false');
+            // Didn't understand the command
+            var reply_text = CommandNotFoundTemplate(msg.chat);
+            bot.sendMessage(chatId, reply_text, opts);
+        }
     }
 });
 
