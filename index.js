@@ -19,18 +19,6 @@ var t = new Trello(trello_key, trello_token);
 // Lets just story the cards for now, as they don't change often
 var board = {}; // An object to hold the board's cards
 board.cards = []; // An array for the cards
-t.get("/1/boards/awhXkqQu/cards", { cards: "open" }, function(err, data) {
-    if (err) throw err;
-    data.forEach(function(el) {
-        // Add the labels as a property of the card object
-        el.labels.forEach(function(l) {
-            var label = l.name.toLowerCase();
-            label = label.replace(/\W/, '_');
-            el["label_" + label] = true;
-        });
-        board.cards.push(el);
-    });
-});
 
 // Telegram bot
 var options = {
@@ -51,6 +39,19 @@ bot.on('text', function (msg) {
 
     // Start
     if (msg.text == '/start') {
+        // Load or re-load the Trello cards
+        t.get("/1/boards/awhXkqQu/cards", { cards: "open" }, function(err, data) {
+            if (err) throw err;
+            data.forEach(function(el) {
+                // Add the labels as a property of the card object
+                el.labels.forEach(function(l) {
+                    var label = l.name.toLowerCase();
+                    label = label.replace(/\W/, '_');
+                    el["label_" + label] = true;
+                });
+                board.cards.push(el);
+            });
+        });
         var opts = {
             reply_markup: JSON.stringify({
                 one_time_keyboard: true,
@@ -198,6 +199,15 @@ bot.on('text', function (msg) {
     if (msg.text == '/share') {
         // Not implemented
         bot.sendMessage(chatId, 'Share stub');
+    } 
+    
+    //var commands = msg.text.match(/start|help|menu|settings|tactics|principles/);
+    //console.log(commands);
+    var commands = new RegExp('start|help|menu|define|search|settings|tactics|principles|stories|big_ideas|more|save|share', 'i')
+    if ( commands.test( msg.text ) === false ) {
+        // Didn't understand the command
+        var reply_text = CommandNotFoundTemplate(msg.chat);
+        bot.sendMessage(chatId, reply_text, opts);
     }
 });
 
@@ -236,11 +246,19 @@ var ModuleDetailTemplate = Handlebars.compile(ModuleDetailSource);
 var DefineSource = "Okay, {{first_name}}, let me help 👍: A tactic is a specific form of creative action, such as a flash mob or an occupation | A Principle is a design guideline for movement building and action planning | Big Ideas are big-picture concept and ideas that help us understand how the world works and how we might go about changing it. | Finally stories of resistance & change are capsules of successful and instructive creative actions, useful for illustrating how principles, tactics and big ideas can be successfully applied in practice. \n\n Would you like to access /tactics /principles /big_ideas or /stories ?"
 var DefineTemplate = Handlebars.compile(DefineSource);
 
-var HelpSource = "Okay, {{first_name}}, I can help. This is the help text... ";
+var HelpSource = "Okay, {{first_name}}, I can help.\n" + 
+    "The available commands are:\n" +
+    "/define - Definitions for the types of the content\n" +
+    "/search - Search for content by name\n" +
+    "/big_ideas - List all Big ideas\n" +
+    "/principles - List all Principles\n" +
+    "/stories - List all Stories\n" +
+    "/tactics - List all Tactics\n" +
+    "";
 var HelpTemplate = Handlebars.compile(HelpSource);
 
-var MenuSource = "Here are all of the commands available: \n * To come\n";
-var MenuTemplate = Handlebars.compile(MenuSource);
+//var MenuSource = "Here are all of the commands available: \n * To come\n";
+var MenuTemplate = Handlebars.compile(HelpSource);
 
 
 // Module (card) search results
@@ -252,3 +270,7 @@ var SearchResultsTemplate = Handlebars.compile(SearchResultsSource);
 // Search is empty
 var SearchEmptySource   = "It doesn't look like you entered a search term. Try, for example, '/search topic'";
 var SearchEmptyTemplate = Handlebars.compile(SearchEmptySource);
+
+// Command not found 
+var CommandNotFoundSource   = "I don't know how to respond to that command. Type /help for assistance with the commands";
+var CommandNotFoundTemplate = Handlebars.compile(CommandNotFoundSource);
