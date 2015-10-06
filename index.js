@@ -257,8 +257,8 @@ var HelpSource = "Okay, {{first_name}}, I can help.\n" +
     "";
 var HelpTemplate = Handlebars.compile(HelpSource);
 
-var MenuSource = "Here are all of the commands available: \n * To come\n";
-var MenuTemplate = Handlebars.compile(MenuSource);
+//var MenuSource = "Here are all of the commands available: \n * To come\n";
+var MenuTemplate = Handlebars.compile(HelpSource);
 
 
 // Module (card) search results
