@@ -72,6 +72,7 @@ bot.on('text', function (msg) {
                 keyboard: [
                     ['/tactics', '/principles'],
                     ['/big_ideas', '/stories'],
+                    ['/tools', '/define'],
                 ],
             })
         };
@@ -218,14 +219,10 @@ bot.on('text', function (msg) {
     
     //var commands = msg.text.match(/start|help|menu|settings|tactics|principles/);
     //console.log(commands);
-    console.log('something....');
-    var commands = new RegExp('start|help|menu|define|search|settings|tactics|principles|stories|big_ideas|more|save|share', 'i');
+    var commands = new RegExp('start|help|menu|define|search|settings|tactics|principles|stories|big_ideas|tools|more|save|share', 'i');
     var module_ids  = /^\/\d+$/;
-    console.log(module_ids);
     if ( commands.test( msg.text ) === false ) {
-        console.log('command false');
         if ( module_ids.test ( msg.text ) === false ) {
-            console.log('module false');
             // Didn't understand the command
             var reply_text = CommandNotFoundTemplate(msg.chat);
             bot.sendMessage(chatId, reply_text, opts);
@@ -265,7 +262,7 @@ var ModuleDetailSource = "{{{name}}}\n" +
     "{{else}}No card data available{{/if}}";
 var ModuleDetailTemplate = Handlebars.compile(ModuleDetailSource);
 
-var DefineSource = "Okay, {{first_name}}, let me help 👍: A tactic is a specific form of creative action, such as a flash mob or an occupation | A Principle is a design guideline for movement building and action planning | Big Ideas are big-picture concept and ideas that help us understand how the world works and how we might go about changing it. | Finally stories of resistance & change are capsules of successful and instructive creative actions, useful for illustrating how principles, tactics and big ideas can be successfully applied in practice. \n\n Would you like to access /tactics /principles /big_ideas or /stories ?"
+var DefineSource = "Okay, {{first_name}}, let me help 👍: A tactic is a specific form of creative action, such as a flash mob or an occupation | A Principle is a design guideline for movement building and action planning | Big Ideas are big-picture concept and ideas that help us understand how the world works and how we might go about changing it. | Finally stories of resistance & change are capsules of successful and instructive creative actions, useful for illustrating how principles, tactics and big ideas can be successfully applied in practice. \n\n Would you like to access /tactics /principles /big_ideas /tools or /stories ?"
 var DefineTemplate = Handlebars.compile(DefineSource);
 
 var HelpSource = "Okay, {{first_name}}, I can help.\n" + 
@@ -276,6 +273,7 @@ var HelpSource = "Okay, {{first_name}}, I can help.\n" +
     "/principles - List all Principles\n" +
     "/stories - List all Stories\n" +
     "/tactics - List all Tactics\n" +
+    "/tools - List all Tools\n" +
     "";
 var HelpTemplate = Handlebars.compile(HelpSource);
 
