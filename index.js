@@ -246,7 +246,15 @@ var ModuleDetailTemplate = Handlebars.compile(ModuleDetailSource);
 var DefineSource = "Okay, {{first_name}}, let me help 👍: A tactic is a specific form of creative action, such as a flash mob or an occupation | A Principle is a design guideline for movement building and action planning | Big Ideas are big-picture concept and ideas that help us understand how the world works and how we might go about changing it. | Finally stories of resistance & change are capsules of successful and instructive creative actions, useful for illustrating how principles, tactics and big ideas can be successfully applied in practice. \n\n Would you like to access /tactics /principles /big_ideas or /stories ?"
 var DefineTemplate = Handlebars.compile(DefineSource);
 
-var HelpSource = "Okay, {{first_name}}, I can help. This is the help text... ";
+var HelpSource = "Okay, {{first_name}}, I can help.\n" + 
+    "The available commands are:\n" +
+    "/define - Definitions for the types of the content\n" +
+    "/search - Search for content by name\n" +
+    "/big_ideas - List all Big ideas\n" +
+    "/principles - List all Principles\n" +
+    "/stories - List all Stories\n" +
+    "/tactics - List all Tactics\n" +
+    "";
 var HelpTemplate = Handlebars.compile(HelpSource);
 
 var MenuSource = "Here are all of the commands available: \n * To come\n";
