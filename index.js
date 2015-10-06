@@ -199,11 +199,14 @@ bot.on('text', function (msg) {
     if (msg.text == '/share') {
         // Not implemented
         bot.sendMessage(chatId, 'Share stub');
-    } else {
+    } 
+    
+    //var commands = msg.text.match(/start|help|menu|settings|tactics|principles/);
+    //console.log(commands);
+    var commands = new RegExp('start|help|menu|define|search|settings|tactics|principles|stories|big_ideas|more|save|share', 'i')
+    if ( commands.test( msg.text ) === false ) {
         // Didn't understand the command
         var reply_text = CommandNotFoundTemplate(msg.chat);
-        // Send the menu
-        //bot.sendMessage(chatId, reply_text, opts );
         bot.sendMessage(chatId, reply_text, opts);
     }
 });
