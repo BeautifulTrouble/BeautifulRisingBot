@@ -131,12 +131,10 @@ bot.on('text', function (msg) {
         bot.sendMessage(chatId, reply_text, opts);
     }
 
-    if (msg.text == '/stories' || msg.text == '/big_ideas' || msg.text == '/tactics' || msg.text == '/principles' ) {
+    if (msg.text == '/stories' || msg.text == '/big_ideas' || msg.text == '/tactics' || msg.text == '/principles' || msg.text == '/tools' ) {
         var type = msg.text;
         // Remove leading slash
         type = type.replace(/\//, '');
-        // Un-slugify
-        type = type.replace(/_/, ' ');
         // Capitlize
         var typeName = capitalize(type);
         // Create a filtered collection of cards
@@ -146,8 +144,12 @@ bot.on('text', function (msg) {
         filteredList.cards = [];
         filteredList.cards = board.cards.filter(function(el) {
             return el["label_" + type] == true &&
+                // Only if it's not in list 552fe48327ca601d7b2d2453
+                // Or in list  55a82fb3bdf8ada2fa42dd88
+                el["idList"] != '552fe48327ca601d7b2d2453' &&
+                el["idList"] != '55a82fb3bdf8ada2fa42dd88';
                 // Only "Game card" labelled cards for now
-                el.label_game_card == true;
+                //el.label_game_card == true;
         });
         var reply_text = ModuleListTemplate(filteredList);
         bot.sendMessage(chatId, reply_text);
