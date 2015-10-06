@@ -147,7 +147,7 @@ bot.on('text', function (msg) {
             return el["label_" + type] == true &&
                 // Only if it's not in list 552fe48327ca601d7b2d2453
                 // Or in list  55a82fb3bdf8ada2fa42dd88
-                el["idList"] != '552fe48327ca601d7b2d2453' &&
+                el["idList"] != '552fe48327ca601d7b2d2453' && 
                 el["idList"] != '55a82fb3bdf8ada2fa42dd88';
                 // Only "Game card" labelled cards for now
                 //el.label_game_card == true;
