@@ -6,6 +6,11 @@ var _ = require('underscore');
 var slugify = require("underscore.string/slugify");
 var capitalize = require("underscore.string/capitalize");
 var archieml = require('archieml');
+var
+  util = require('util'),
+  couchdb = require('felix-couchdb'),
+  client = couchdb.createClient(5984, 'localhost'),
+  db = client.db('bot-logging');
 
 // Read the configuration
 var conf = require('./package.json');
@@ -34,8 +39,16 @@ bot.getMe().then(function (me) {
 
 // Poll for messages from Telegram
 bot.on('text', function (msg) {
-    console.log(msg);
     var chatId = msg.chat.id;
+    var messageId = msg.message_id;
+    // MVP for logging
+    // TODO replace with Winston, https://github.com/winstonjs/winston
+    db
+      .saveDoc(messageId, msg, function(er, ok) {
+        if (er) throw new Error(JSON.stringify(er));
+        console.log('Saved doc to couch:');
+        console.log(msg);
+      });
 
     // Start
     if (msg.text == '/start') {
