@@ -4,7 +4,7 @@
 
 ## TODO 
 
-For v1.0.0
+For v1.0.0 "Bangladesh"
 - [x] Explore the Trello API options
 - [x] Output Bot version on /start
 - [x] Add required commands (start, help, settings)
@@ -19,11 +19,26 @@ For v1.0.0
 - [x] Respond to messages that don't match a command (e.g., "Hi")
 - [x] Functionality specific to user testing in Bangladesh, Uganda, etc. I.e., recording full user sessions for later review
 - [x] Add Bot /setjoingroup /setprivacy
-- [ ] Sending a card image if it exists
-- [ ] Simple session management to enable "Save" and other user-specific functionality, which will make some of the "returning user" map paths available.
 
-For v2.0.0
-- [ ] Once MVP is "done," migrate to [bot with plugins approach](https://github.com/crisbal/Node-Telegram-Bot) 
+For v2.0.0 "Uganda" (November)
+- [ ] Restart bot on server reboot [Adrian]
+- [ ] Log responses in addition to commands
+- [ ] Set up utility to send 'typing' response for longer queries
+- [ ] Migrate to [bot with plugins approach](https://github.com/crisbal/Node-Telegram-Bot) 
+- [ ] Simple session management to enable "Save" and other user-specific functionality, which will make some of the "returning user" map paths available.
+- [ ] Enable /save functionality
+- [ ] Sending a card image if it exists
+- [ ] Add a /feedback route. Store feedback in CouchDB
+- [ ] Add a /telegram route to provide information on what Telegram is (alias /security)
+- [ ] If functionality doesn't exist, remove it (no incomplete stubs in master branch)
+
+For v.3.0.0 "Mexico" (March)
+- [ ] A 'QA' mode that enables special routes and logging specific to gathering QA data
+- [ ] Speak Spanish!
+- [ ] Share modules
+- [ ] Submit basic modules / ideas
+- [ ] Beautiful Rising e-mail list subscription from whithin app
+- [ ] Migrate to Beautiful Rising API
 
 ## Required commands / endpoints
 
