@@ -24,7 +24,7 @@ For v2.0.0 "Uganda" (November)
 - [ ] Restart bot on server reboot [Adrian]
 - [ ] Log responses in addition to commands
 - [ ] Set up utility to send 'typing' response for longer queries
-- [ ] Migrate to [bot with plugins approach](https://github.com/crisbal/Node-Telegram-Bot) 
+- [x] Migrate to [bot with plugins approach](https://github.com/crisbal/Node-Telegram-Bot) 
 - [ ] Simple session management to enable "Save" and other user-specific functionality, which will make some of the "returning user" map paths available.
 - [ ] Enable /save functionality
 - [ ] Sending a card image if it exists
