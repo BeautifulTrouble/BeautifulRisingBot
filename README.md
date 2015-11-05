@@ -2,6 +2,17 @@
 
 > A Beautiful Rising Bot for Telegram
 
+## Running the bot
+
+`source setup.sh` to get the various API keys
+`supervisor bot.js` or `forever bot.js`
+
+## Adding a new route / plugin
+
+* Add your plugin in the `plugins` directory, e.g.: `plugins/magic.js`
+* Load your plugin in the `config.js` file by adding it to the config.activePlugins array
+* Restart the bot
+
 ## TODO 
 
 For v1.0.0 "Bangladesh"
@@ -22,9 +33,10 @@ For v1.0.0 "Bangladesh"
 
 For v2.0.0 "Uganda" (November)
 - [ ] Restart bot on server reboot [Adrian]
+- [x] Migrate to [bot with plugins approach](https://github.com/crisbal/Node-Telegram-Bot) 
+- [ ] Add in the introduction text from the session worksheet
 - [ ] Log responses in addition to commands
 - [ ] Set up utility to send 'typing' response for longer queries
-- [x] Migrate to [bot with plugins approach](https://github.com/crisbal/Node-Telegram-Bot) 
 - [ ] Simple session management to enable "Save" and other user-specific functionality, which will make some of the "returning user" map paths available.
 - [ ] Enable /save functionality
 - [ ] Sending a card image if it exists
