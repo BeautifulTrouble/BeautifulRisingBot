@@ -42,7 +42,10 @@ bot.on('message', function(msg) {
 process.on('SIGINT', shutDown);
 
 // Stop safely in case of `uncaughtException`.
-process.on('uncaughtException', shutDown);
+process.on('uncaughtException', function(error) { 
+    console.log(error);
+    shutDown();
+});
 
 function shutDown() {
     console.log("The bot is shutting down...");
