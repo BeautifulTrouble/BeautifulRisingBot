@@ -31,6 +31,7 @@ var start = function(){
             // If so, compile a response
             var replyText = StartTemplate(msg.chat);
             // And send it back to the user
+            // TODO test this
             var opts = {
                 reply_markup: JSON.stringify({
                     one_time_keyboard: true,
