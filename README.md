@@ -7,6 +7,11 @@
 `source setup.sh` to get the various API keys
 `supervisor bot.js` or `forever bot.js`
 
+Keep in mind, to run the bot you'll need to have the following:
+
+* A connection to a content-providing API (currently in the Trello plugin)
+* A connection to a couchdb instance (required in bot.js)
+
 ## Adding a new route / plugin
 
 * Add your plugin in the `plugins` directory, e.g.: `plugins/magic.js`
