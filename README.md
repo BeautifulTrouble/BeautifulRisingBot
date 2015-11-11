@@ -39,8 +39,8 @@ For v1.0.0 "Bangladesh"
 For v2.0.0 "Uganda" (November)
 - [ ] Restart bot on server reboot [Adrian]
 - [x] Migrate to [bot with plugins approach](https://github.com/crisbal/Node-Telegram-Bot) 
-- [ ] Add in the introduction text from the session worksheet
-- [ ] Log responses in addition to commands
+- [x] Add in the introduction text from the session worksheet
+- [x] Log responses in addition to commands
 - [ ] Set up utility to send 'typing' response for longer queries
 - [ ] Simple session management to enable "Save" and other user-specific functionality, which will make some of the "returning user" map paths available.
 - [ ] Enable /save functionality
