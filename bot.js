@@ -64,7 +64,7 @@ function logReply(msg, reply) {
     .getDoc(msg.message_id, function(er, doc) {
         if (er) throw new Error(JSON.stringify(er));
         var newDoc = doc;
-        newDoc.reply  = reply.opts;
+        newDoc.reply  = reply;
         newDoc._rev = doc._rev;
         updateDoc(newDoc);
     });
