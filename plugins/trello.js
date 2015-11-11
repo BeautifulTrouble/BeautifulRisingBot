@@ -162,7 +162,7 @@ var ModuleDetailTemplate = Handlebars.compile(ModuleDetailSource);
 
 // Module (card) search results
 var SearchResultsSource = "{{#if cards.length}}Matching cards for '{{searchTerm}}':\n" + 
-    "{{#cards}}➡️ {{{name}}}: Type /{{idShort}} for more. \n{{/cards}}" + 
+    "{{#cards}}➡️ {{{name}}}: Reply with /{{idShort}} to read more. \n{{/cards}}" + 
     "{{else}}No matching cards found for {{searchTerm}}. 😪{{/if}}";
 var SearchResultsTemplate = Handlebars.compile(SearchResultsSource);
 
