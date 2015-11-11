@@ -15,7 +15,8 @@ var
 util = require('util'),
     couchdb = require('felix-couchdb'),
     client = couchdb.createClient(5984, 'localhost'),
-    db = client.db('bot-logging');
+    db = client.db('bot-logging'),
+    user = client.db('_users');
 
 console.log("The bot is starting...");
 plugins.runPlugins(config.activePlugins);
@@ -47,6 +48,10 @@ bot.on('message', function(msg) {
     }
 });
 
+function handleMessage(msg) {
+
+}
+
 function logMsg(msg) {
     db
     .saveDoc(msg.message_id, msg, function(er, ok) {
@@ -76,7 +81,7 @@ process.on('SIGINT', shutDown);
 
 // Stop safely in case of `uncaughtException`.
 process.on('uncaughtException', function(error) {
-    console.log(error);
+    console.trace(error);
     shutDown();
 });
 
