@@ -11,8 +11,7 @@ var bot = new TelegramBot(token, {
     polling: true
 });
 
-var
-util = require('util'),
+var util = require('util'),
     couchdb = require('felix-couchdb'),
     client = couchdb.createClient(5984, 'localhost'),
     db = client.db('bot-logging'),
