@@ -12,6 +12,8 @@ Keep in mind, to run the bot you'll need to have the following:
 * A connection to a content-providing API (currently in the Trello plugin)
 * A connection to a couchdb instance (required in bot.js)
 
+And, if the Trello API token expires, then you will need to re-authenticate to Trello. Ideally, the first time you authenticate and generate a token, you should use the `expiration=never` parameters, e.g.: https://trello.com/1/connect?key=<PUBLIC_KEY>&name=MyApp&response_type=token?&expiration=never
+
 ## Adding a new route / plugin
 
 * Add your plugin in the `plugins` directory, e.g.: `plugins/magic.js`
