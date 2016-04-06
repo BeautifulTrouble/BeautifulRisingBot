@@ -1,28 +1,28 @@
 {
     "app": {
-        "name": "TODO List",
+        "name": "Nobre",
         "login": {
-            "text": "Enter your credentials below to login",
+            "text": "texto",
             "message": {
-                "success": "Login successful !\nWelcome back %s !",
-                "error": "Make sure you've entered the correct username and password"
+                "success": "éxito",
+                "error": "error"
             },
             "password": {
-                "forget": "I forgot my password",
-                "reset": "Enter your address in the field below. A new password will be sent to your inbox."
+                "forget": "olvidar",
+                "reset": "Reiniciar"
             },
-            "user": "Username",
-            "pass": "Password"
+            "user": "usuario",
+            "pass": "pasar"
         },
         "register": {
-            "text": "Sign up for free! No credit card required!",
+            "text": "texto",
             "message": {
-                "success": "Thank you for signing up !\nPlease check your email address to activate your account.",
-                "error": "We were unable to sign you up.\nPlease correct the marked fields."
+                "success": "éxito",
+                "error": "error"
             }
         },
         "menu": {
-            "terms": "Terms and conditions"
+            "terms": "condiciones"
         }
     }
 }
