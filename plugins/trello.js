@@ -114,8 +114,8 @@ var trello = function(){
             reply({type: 'text', text: '' + replyText});
         }
         var getCard = msg.text.match(/^\/(\d+)$/);
-            var id = getCard[1];
         if ( getCard )  {
+            var id = getCard[1];
             var found = board.cards.reduce(function(found, el){
                 return found || (el.idShort == id && el);
             },null);
