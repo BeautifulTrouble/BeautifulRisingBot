@@ -1,0 +1,8 @@
+{
+    "name": "Start",
+    "version": 1.0,
+    "startup": "start.js",
+    "help": [
+        ["{{commandPrefix}}start", "Start the Beautiful Rising bot", "Get the overview"]
+    ]
+}
