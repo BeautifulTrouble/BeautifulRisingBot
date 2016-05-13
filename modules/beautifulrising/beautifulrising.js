@@ -3,8 +3,10 @@ var request = require.safe('request');
 var _ = require.safe('underscore');
 var text;
 var users = [];
+var commandPrefix;
 
 exports.match = function (event, commandPrefix) {
+    command = commandPrefix;
     return event.arguments[0] === commandPrefix + 'start' 
         || event.arguments[0] === commandPrefix + 'menu' 
         || event.arguments[0] === commandPrefix + 'define';
@@ -36,11 +38,30 @@ exports.run = function(api, event) {
         // Returning user
         user.returning = 1;
     }
-    var StartSource = text.start;
-    var StartTemplate = Handlebars.compile(StartSource);
-    var replyText = StartTemplate({ "event": event, "config": "", "user": user });
+        //console.log(text);
+    var source = '';
+    var template = '';
+    var replyText = '';
+    if ( event.arguments[0] === command + 'start' ) {
+        source = text.start;
+        console.log(source);
+        template = Handlebars.compile(source);
+        console.log(template);
+        replyText = template({ "event": event, "config": "", "user": user });
+        console.log(replyText);
+    } else if ( event.arguments[0] === command + 'define' ) {
+        console.log('here');
+        source = text['menu-definition'];
+        console.log(source);
+        template = Handlebars.compile(source);
+        console.log(template);
+        replyText = template({ "event": event, "config": "", "user": user });
+        console.log(replyText);
+    }
     console.log(users);
-    api.sendMessage(replyText, event.thread_id);
+    if ( replyText !== '' ) {
+        api.sendMessage(replyText, event.thread_id);
+    }
 };
 
 exports.unload = function() {

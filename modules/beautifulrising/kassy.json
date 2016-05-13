@@ -4,6 +4,6 @@
     "startup": "beautifulrising.js",
     "help": [
         ["{{commandPrefix}}start", "Start the Beautiful Rising bot"],
-        ["{{commandPrefix}}define", "text"]
+        ["{{commandPrefix}}define", "Receive a definition of the module types"]
     ]
 }
