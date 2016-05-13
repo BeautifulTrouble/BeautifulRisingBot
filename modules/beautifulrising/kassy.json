@@ -1,8 +1,9 @@
 {
-    "name": "Start",
+    "name": "Beautiful Rising",
     "version": 1.0,
-    "startup": "start.js",
+    "startup": "beautifulrising.js",
     "help": [
-        ["{{commandPrefix}}start", "Start the Beautiful Rising bot", "Get the overview"]
+        ["{{commandPrefix}}start", "Start the Beautiful Rising bot"],
+        ["{{commandPrefix}}define", "text"]
     ]
 }
