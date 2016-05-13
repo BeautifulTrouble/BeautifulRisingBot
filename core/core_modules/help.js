@@ -17,11 +17,9 @@ checkIfModuleExists = function(modules, moduleName) {
 },
 
 shortSummary = function(prefix) {
-	var help = figlet.textSync(this.packageInfo.name.toProperCase()) + '\n '
-		+ this.packageInfo.version + '\n--------------------\n'
-		+ this.packageInfo.homepage +  '\n\n';
+	var help = ''; 
 
-	/* Deprecated */
+        /* Deprecated */
 	var context = {
 		commandPrefix: prefix
 	};
