@@ -44,8 +44,8 @@ For v2.0.0 "Uganda" (November)
 - [x] Add in the introduction text from the session worksheet
 - [x] Log responses in addition to commands
 - [ ] Set up utility to send 'typing' response for longer queries
-- [ ] Simple session management to enable "Save" and other user-specific functionality, which will make some of the "returning user" map paths available.
-- [ ] Enable /save functionality
+- [x] Simple session management to enable "Save" and other user-specific functionality, which will make some of the "returning user" map paths available.
+- [x] Enable /save functionality
 - [ ] Sending a card image if it exists
 - [ ] Add a /feedback route. Store feedback in CouchDB
 - [ ] Add a /telegram route to provide information on what Telegram is (alias /security)
@@ -57,7 +57,7 @@ For v.3.0.0 "Mexico" (March)
 - [ ] Share modules
 - [ ] Submit basic modules / ideas
 - [ ] Beautiful Rising e-mail list subscription from whithin app
-- [ ] Migrate to Beautiful Rising API
+- [x] Migrate to Beautiful Rising API
 
 ## Required commands / endpoints
 
