@@ -78,7 +78,8 @@ Platform.prototype.messageRxd = function(api, event) {
                 this.handleTransaction(this.loadedModules[i], runArgs);
             }
             catch (e) {
-                api.sendMessage(event.body + " didn't quite work as expected" + event.sender_name + ".", event.thread_id);
+                // TODO send to Kassy
+                api.sendMessage("The command " + event.body + " didn't quite work as expected " + event.sender_name + ".", event.thread_id);
                 console.critical(e);
             }
             return;
