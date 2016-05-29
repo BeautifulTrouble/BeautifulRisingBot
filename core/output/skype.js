@@ -31,7 +31,8 @@ exports.start = function(callback) {
 		
 		skype.messagesCallback = function (messages) {
 			messages.forEach(function (message) {
-				if (message.resource.messagetype === 'Text') {
+                            console.log(message);
+				if (message.resource.messagetype === 'Text' || message.resource.messagetype === 'RichText' ) {
 					var threadLink = message.resource.conversationLink,
 						threadId = threadLink.substring(threadLink.lastIndexOf('/') + 1),
 						content = message.resource.content,
