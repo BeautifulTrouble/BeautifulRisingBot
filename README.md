@@ -10,8 +10,6 @@ Run the bot with `node main.js platform`, e.g., `node main.js telegram skype fac
 
 This bot is just a module for the [Kassy](https://github.com/concierge/Kassy) multi-platform bot library.
 
-And, if the Trello API token expires, then you will need to re-authenticate to Trello. Ideally, the first time you authenticate and generate a token, you should use the `expiration=never` parameters, e.g.: https://trello.com/1/connect?key=<PUBLIC_KEY>&name=MyApp&response_type=token?&expiration=never
-
 ## Adding a new route / plugin
 
 * You can add additional functionality directly in the `/module/beautifulrising/beautifulrising.js` module;
