@@ -11,3 +11,6 @@ Kassy.njsproj
 Kassy.sln
 obj/Debug/Kassy.njsproj.FileListAbsolute.txt
 modules/kpm_*
+config.json.develop
+config.json.production
+_not_used_core_modules
