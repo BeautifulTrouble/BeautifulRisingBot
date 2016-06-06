@@ -15,51 +15,6 @@ This bot is just a module for the [Kassy](https://github.com/concierge/Kassy) mu
 * You can add additional functionality directly in the `/module/beautifulrising/beautifulrising.js` module;
 * Or you can add it in a separate module or library
 
-## TODO 
-
-**Server:**
-- [ ] Restart bot on server reboot [Adrian]
-
-**Beautiful Rising module, high**
-- [ ]
-- [ ] If functionality doesn't exist, remove it (no incomplete stubs in master branch)
-- [ ] Handle snapshot & gallery entries
-- [ ] Strip markdown where it's not supported
-- [ ] Speak Spanish (content)
-- [ ] Speak Spanish (interface)
-- [ ] Speak Arabic (content)
-- [ ] Speak Arabic (interface)
-
-**Beautiful Rising module, medium**
-- [ ]
-- [ ] Set up utility to send 'typing' response for longer queries
-- [ ] Sending a card image if it exists
-- [ ] Share modules
-- [ ] Fix 'unique' on user.saved_modules
-- [ ] Run /start on first connect
-
-**Beautiful Rising module, low**
-- [ ] Re-implement logging
-- [ ] Add a /telegram route to provide information on what Telegram is (alias /security)
-- [ ] Submit basic modules / ideas
-- [ ] Beautiful Rising e-mail list subscription from whithin app
-
-**Features to add to Kassy Telegram module:**
-- [ ] Send image
-- [ ] Send typing
-- [ ] Send link
-
-**Facebook-specific issues**
-- [ ] Accepting friend requests
-- [ ] Filtered messages
-- [ ] Send HTML?
-
-**Facebook Meseenger App-specific issues**
-- [ ] 
-
-**Skype-specific issues**
-- [ ] Send HTML?
-
 ## Required commands / endpoints
 
 (Note: the command prefix might not be a forward slash on all platforms. This is set in the config.json)
