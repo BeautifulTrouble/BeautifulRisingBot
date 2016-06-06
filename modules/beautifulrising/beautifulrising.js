@@ -30,7 +30,9 @@ exports.match = function (event, commandPrefix) {
         || event.arguments[0] === commandPrefix + 'search'
         || event.arguments[0] === commandPrefix + 'settings'
         || event.arguments[0] === commandPrefix + 'save'
-        || event.arguments[0] === commandPrefix + 'readmore'
+        || event.arguments[0] === commandPrefix + 'more'
+        || event.arguments[0] === commandPrefix + 'full'
+        || event.arguments[0] === commandPrefix + 'images'
         || modulesRegex.test(argument)
         || readRegex.test(argument);
 };
@@ -52,6 +54,7 @@ exports.load = function() {
     });
     request.get(modulesEndpoint, 
         function(error, response, body) {
+            console.log('Got the modules');
             var modulesNoId = JSON.parse(body);
             modules = _.map(modulesNoId, function(module) {
                 var slug = module.slug;
@@ -131,28 +134,44 @@ exports.run = function(api, event) {
         // TODO check for currentModule --> Move to function
         var savedModules  = user.saved_modules;
         savedModules.push(currentModule);
+        // TODO unique on slug or title
         uniqueModules = _.unique(savedModules);
+        user.saved_modules = [];
         user.saved_modules = uniqueModules;
         //user.saved_modules.push(currentModule);
         console.log(user);
-        source = text['action-save'];
-        console.log(source);
+        console.log('Text: ' + text );
+        source = text['action-save'] || 'Alternate template';
         template = Handlebars.compile(source);
         replyText = template({ "event": event, "config": "", "user": user, "command": command });
-    } else if ( event.arguments[0] === command + 'readmore' ) {
+    } else if ( event.arguments[0] === command + 'more' ) {
         //=================================================================
-        // User sent /readmore command
+        // User sent /more command
         //=================================================================
         // TODO check for currentModule --> Move to function
         module = _.findWhere(modules, { "title": currentModule.name });
         console.log(module);
-        source = module['short-write-up'];
+        source = module['short-write-up'] || 'Alternate template';
+        console.log(source);
+        // TODO need a utility to check for source, or provide alternate template
+        template = Handlebars.compile(source);
+        replyText = template({ "event": event, "config": "", "user": user, "command": command });
+        replyText = removeMd(replyText);
+    } else if ( event.arguments[0] === command + 'full' ) {
+        //=================================================================
+        // User sent /more command
+        //=================================================================
+        // TODO check for currentModule --> Move to function
+        module = _.findWhere(modules, { "title": currentModule.name });
+        console.log(module);
+        // TODO need a utility to check for source, or provide alternate template
+        source = module['full-write-up'] || 'Alternate template';
         console.log(source);
         template = Handlebars.compile(source);
-        text = template({ "event": event, "config": "", "user": user, "command": command });
-        replyText = removeMd(text);
+        replyText = template({ "event": event, "config": "", "user": user, "command": command });
+        replyText = removeMd(replyText);
 
-    } else if ( modulesRegex.test(argument) ) { // getModules
+    } else if ( modulesRegex.test(argument) ) {
         //=================================================================
         // User asked for a list of modules by type
         //=================================================================
@@ -166,9 +185,9 @@ exports.run = function(api, event) {
         // TODO move this string to botflow Google Doc + Handlebars
         replyText = "I've found " + count + " modules for you:\n";
         _.each(filteredModules, function(module) { 
-            replyText += module.title + "\n" + command + "read" + module.simple_id + "\n";
+            replyText += module.title + "\n➡ " + command + "read" + module.simple_id + "\n";
         });
-    } else if ( readRegex.test(argument) ) { // getModule
+    } else if ( readRegex.test(argument) ) {
         //=================================================================
         // User asked for a specific module by id
         //=================================================================
@@ -178,6 +197,7 @@ exports.run = function(api, event) {
         var module = _.findWhere(modules, { simple_id: moduleName });
         user.currentModule = { "name": module.title, "simple_id": command + "read" + module.simple_id };
         replyText = module.title + "\n" + module.snapshot;
+        // TODO send /more or /full based on what properties are present
         console.log(user);
     } if ( replyText !== '' ) {
         //=================================================================
