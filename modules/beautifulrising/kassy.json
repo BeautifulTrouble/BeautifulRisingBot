@@ -1,0 +1,9 @@
+{
+    "name": "Beautiful Rising",
+    "version": 1.0,
+    "startup": "beautifulrising.js",
+    "help": [
+        ["{{commandPrefix}}start", "Start the Beautiful Rising bot"],
+        ["{{commandPrefix}}define", "Receive a definition of the module types"]
+    ]
+}

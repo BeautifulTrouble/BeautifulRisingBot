@@ -1,65 +1,68 @@
 # Beautiful Rising Bot
 
-> A Beautiful Rising Bot for Telegram
+> A Beautiful Rising Bot for Telegram, Skype, Facebook, Slack, and more
 
 ## Running the bot
 
-`source setup.sh` to get the various API keys
-`supervisor bot.js` or `forever bot.js`
+Create a config.json with the necessary properties to access the various platforms.
 
-Keep in mind, to run the bot you'll need to have the following:
+Run the bot with `node main.js platform`, e.g., `node main.js telegram skype facebook`
 
-* A connection to a content-providing API (currently in the Trello plugin)
-* A connection to a couchdb instance (required in bot.js)
-
-And, if the Trello API token expires, then you will need to re-authenticate to Trello. Ideally, the first time you authenticate and generate a token, you should use the `expiration=never` parameters, e.g.: https://trello.com/1/connect?key=<PUBLIC_KEY>&name=MyApp&response_type=token?&expiration=never
+This bot is just a module for the [Kassy](https://github.com/concierge/Kassy) multi-platform bot library.
 
 ## Adding a new route / plugin
 
-* Add your plugin in the `plugins` directory, e.g.: `plugins/magic.js`
-* Load your plugin in the `config.js` file by adding it to the config.activePlugins array
-* Restart the bot
+* You can add additional functionality directly in the `/module/beautifulrising/beautifulrising.js` module;
+* Or you can add it in a separate module or library
 
 ## TODO 
 
-For v1.0.0 "Bangladesh"
-- [x] Explore the Trello API options
-- [x] Output Bot version on /start
-- [x] Add required commands (start, help, settings)
-- [x] Add top-level navigation (menu, search)
-- [x] Add resource listing commands
-- [x] Add all getResource commands
-- [x] Stub out resource action commands (more, save, share)
-- [x] Add Bot description
-- [x] Add Bot photo
-- [x] Add Bot commands to BotFather
-- [x] Add some emoji to make things cute and cuddly
-- [x] Respond to messages that don't match a command (e.g., "Hi")
-- [x] Functionality specific to user testing in Bangladesh, Uganda, etc. I.e., recording full user sessions for later review
-- [x] Add Bot /setjoingroup /setprivacy
-
-For v2.0.0 "Uganda" (November)
+**Server:**
 - [ ] Restart bot on server reboot [Adrian]
-- [x] Migrate to [bot with plugins approach](https://github.com/crisbal/Node-Telegram-Bot) 
-- [x] Add in the introduction text from the session worksheet
-- [x] Log responses in addition to commands
-- [ ] Set up utility to send 'typing' response for longer queries
-- [ ] Simple session management to enable "Save" and other user-specific functionality, which will make some of the "returning user" map paths available.
-- [ ] Enable /save functionality
-- [ ] Sending a card image if it exists
-- [ ] Add a /feedback route. Store feedback in CouchDB
-- [ ] Add a /telegram route to provide information on what Telegram is (alias /security)
-- [ ] If functionality doesn't exist, remove it (no incomplete stubs in master branch)
 
-For v.3.0.0 "Mexico" (March)
-- [ ] A 'QA' mode that enables special routes and logging specific to gathering QA data
-- [ ] Speak Spanish!
+**Beautiful Rising module, high**
+- [ ]
+- [ ] If functionality doesn't exist, remove it (no incomplete stubs in master branch)
+- [ ] Handle snapshot & gallery entries
+- [ ] Strip markdown where it's not supported
+- [ ] Speak Spanish (content)
+- [ ] Speak Spanish (interface)
+- [ ] Speak Arabic (content)
+- [ ] Speak Arabic (interface)
+
+**Beautiful Rising module, medium**
+- [ ]
+- [ ] Set up utility to send 'typing' response for longer queries
+- [ ] Sending a card image if it exists
 - [ ] Share modules
+- [ ] Fix 'unique' on user.saved_modules
+- [ ] Run /start on first connect
+
+**Beautiful Rising module, low**
+- [ ] Re-implement logging
+- [ ] Add a /telegram route to provide information on what Telegram is (alias /security)
 - [ ] Submit basic modules / ideas
 - [ ] Beautiful Rising e-mail list subscription from whithin app
-- [ ] Migrate to Beautiful Rising API
+
+**Features to add to Kassy Telegram module:**
+- [ ] Send image
+- [ ] Send typing
+- [ ] Send link
+
+**Facebook-specific issues**
+- [ ] Accepting friend requests
+- [ ] Filtered messages
+- [ ] Send HTML?
+
+**Facebook Meseenger App-specific issues**
+- [ ] 
+
+**Skype-specific issues**
+- [ ] Send HTML?
 
 ## Required commands / endpoints
+
+(Note: the command prefix might not be a forward slash on all platforms. This is set in the config.json)
 
 * `/start`
 
@@ -82,18 +85,18 @@ For v.3.0.0 "Mexico" (March)
 
 * `/principles`
 
-* `/bigideas`
-
 * `/stories`
 
-(Note: ForceReply for sort options if necessary)
+* `/methodologies`
 
 ## Resource-specific navigation
-
-* `/[:resourcetype][:id]` - e.g., `/tactic12345`
 Emojis can be used to visually provide UI feedback, e.g. More info, Save, Back
+
     
-    * `/[:action][:id]` - Take action on resource ID
+    * `/[:action][:id]` - Take action on resource ID, e.g., /readsomemodulenameslug
     * `/more`
+    * `/full`
     * `/save`
     * `/share`
+
+
