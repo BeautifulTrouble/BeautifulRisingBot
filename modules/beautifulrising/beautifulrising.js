@@ -216,6 +216,14 @@ exports.run = function(api, event) {
         var module = _.findWhere(modules, { simple_id: moduleName });
         user.currentModule = { "name": module.title, "simple_id": command + "read" + module.simple_id };
         replyText = module.title + "\n" + module.snapshot;
+        if ( utils.checkForMore(module) ) { 
+            replyText += ''; // TODO text[action-more]
+            replyText += "\n" + command + 'more';
+        } 
+        if ( utils.checkForFull(module) ) {
+            replyText += "\n" + text['action-read-full'];
+            replyText += " " + command + 'full';
+        }
         // TODO send /more or /full based on what properties are present
     } if ( replyText !== '' ) {
         //=================================================================
