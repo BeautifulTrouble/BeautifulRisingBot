@@ -2,19 +2,20 @@ var Handlebars = require.safe('handlebars');
 var request = require.safe('request');
 var _ = require.safe('underscore');
 var removeMd = require.safe('remove-markdown');
+var Fuse = require.safe('fuse.js');
 var text;
 var modules;
 var config;
 var users = [];
 var commandPrefix;
 var modulesRegex;
-
 // Helpers to be written
 //
 // getCurrentModule
 // saveModule
 // setLanguage
 // removeMarkdown
+var utils = require('./utils.js');
 
 exports.match = function (event, commandPrefix) {
     command = commandPrefix;
@@ -48,14 +49,17 @@ exports.load = function() {
     var botflow = API_URL + "/text/botflow";
     var modulesEndpoint = API_URL + "/all";
     var configEndpoint = API_URL + "/config";
+    // Get the bot-related objects from the API
     request.get(botflow, 
         function(error, response, body) {
             text = JSON.parse(body);
     });
+    // Get the module objects from the API
     request.get(modulesEndpoint, 
         function(error, response, body) {
             console.log('Got the modules');
             var modulesNoId = JSON.parse(body);
+            // Create a simpleId from the slug & add it to the objects
             modules = _.map(modulesNoId, function(module) {
                 var slug = module.slug;
                 var simpleId = slug.replace(/-/ig, '');
@@ -63,6 +67,7 @@ exports.load = function() {
                 return module;
         });
     });
+    // Get the config object from the API
     request.get(configEndpoint, 
         function(error, response, body) {
             config = JSON.parse(body);
@@ -70,23 +75,22 @@ exports.load = function() {
 };
 
 exports.run = function(api, event) {
-    console.log(event, api);
+    //console.log(event, api);
     var argument = event.arguments[0];
     var user = _.findWhere(users, { id: event.sender_id });
     if ( user === undefined ) {
-        // First time user
+        // If the user is not defined, then they're a first time user
         user = { id: event.sender_id, name: event.sender_name, first_seen: new Date(), saved_modules: [] };
         users.push(user);
     } else {
-        // Returning user
+        // Otherwise, they're a returning user
         user.returning = 1;
     }
-    //console.log(text);
     var source = '';
     var template = '';
     var replyText = '';
     var currentModule = user.currentModule;
-    if ( event.arguments[0] === command + 'start' ) { // Handle /start
+    if ( event.arguments[0] === command + 'start' ) {
         //=================================================================
         // User sent /start command (could send this always for new users)
         //=================================================================
@@ -109,7 +113,7 @@ exports.run = function(api, event) {
         // - Language preference
         // - E-mail address
         // - Twitter, etc.
-    } else if ( event.arguments[0] === command + 'menu' ) { // Menu
+    } else if ( event.arguments[0] === command + 'menu' ) {
         //=================================================================
         // User sent /menu command
         //=================================================================
@@ -117,17 +121,40 @@ exports.run = function(api, event) {
         template = Handlebars.compile(source);
         replyText = template({ "event": event, "config": "", "user": user, "command": command });
         // TODO 
-    } else if ( event.arguments[0] === command + 'search' ) { // Search
+    } else if ( event.arguments[0] === command + 'search' ) {
         //=================================================================
-        // User sent /setting command
+        // User sent /search command
         //=================================================================
-        // TODO 
-    } else if ( event.arguments[0] === command + 'settings' ) { // Search
+        var query = event.arguments[1];
+        console.log(query);
+        var searchOptions = {
+          caseSensitive: false,
+          includeScore: false,
+          shouldSort: true,
+          tokenize: false,
+          threshold: 0.3,
+          location: 0,
+          distance: 100,
+          maxPatternLength: 32,
+          keys: ["title"]
+        };
+        var fuse = new Fuse(modules, searchOptions);
+        var results = fuse.search(query);
+        console.log(results.length);
+        var resultsCount = results.length;
+        // TODO move this to a function that iterates through modules and handles the display of each
+        // TODO move this string to botflow Google Doc + Handlebars
+        replyText = "I've found " + resultsCount + " modules for you:\n";
+        _.each(results, function(module) { 
+            replyText += module.title + "\n➡ " + command + "read" + module.simple_id + "\n";
+        });
+        
+    } else if ( event.arguments[0] === command + 'settings' ) {
         //=================================================================
         // User sent /settings command
         //=================================================================
         // TODO 
-    } else if ( event.arguments[0] === command + 'save' ) { // Search
+    } else if ( event.arguments[0] === command + 'save' ) {
         //=================================================================
         // User sent /save command
         //=================================================================
@@ -139,8 +166,6 @@ exports.run = function(api, event) {
         user.saved_modules = [];
         user.saved_modules = uniqueModules;
         //user.saved_modules.push(currentModule);
-        console.log(user);
-        console.log('Text: ' + text );
         source = text['action-save'] || 'Alternate template';
         template = Handlebars.compile(source);
         replyText = template({ "event": event, "config": "", "user": user, "command": command });
@@ -150,9 +175,7 @@ exports.run = function(api, event) {
         //=================================================================
         // TODO check for currentModule --> Move to function
         module = _.findWhere(modules, { "title": currentModule.name });
-        console.log(module);
         source = module['short-write-up'] || 'Alternate template';
-        console.log(source);
         // TODO need a utility to check for source, or provide alternate template
         template = Handlebars.compile(source);
         replyText = template({ "event": event, "config": "", "user": user, "command": command });
@@ -163,10 +186,8 @@ exports.run = function(api, event) {
         //=================================================================
         // TODO check for currentModule --> Move to function
         module = _.findWhere(modules, { "title": currentModule.name });
-        console.log(module);
         // TODO need a utility to check for source, or provide alternate template
         source = module['full-write-up'] || 'Alternate template';
-        console.log(source);
         template = Handlebars.compile(source);
         replyText = template({ "event": event, "config": "", "user": user, "command": command });
         replyText = removeMd(replyText);
@@ -175,13 +196,12 @@ exports.run = function(api, event) {
         //=================================================================
         // User asked for a list of modules by type
         //=================================================================
-        console.log(command);
         //var typePlural = argument.replace(/\command/, '');
         var typePlural =  argument.substring(1);
-        console.log(typePlural);
         var type = config.relationships[typePlural];
         var filteredModules = _.filter(modules, function(module){ return module.type === type; });
         var count = filteredModules.length;
+        // TODO move this to a function that iterates through modules and handles the display of each
         // TODO move this string to botflow Google Doc + Handlebars
         replyText = "I've found " + count + " modules for you:\n";
         _.each(filteredModules, function(module) { 
@@ -193,12 +213,10 @@ exports.run = function(api, event) {
         //=================================================================
         var slug =  event.arguments[0];
         var moduleName = slug.replace(readRegex, '$1');
-        console.log(moduleName);
         var module = _.findWhere(modules, { simple_id: moduleName });
         user.currentModule = { "name": module.title, "simple_id": command + "read" + module.simple_id };
         replyText = module.title + "\n" + module.snapshot;
         // TODO send /more or /full based on what properties are present
-        console.log(user);
     } if ( replyText !== '' ) {
         //=================================================================
         // If there's a replyText string, send it to the user
