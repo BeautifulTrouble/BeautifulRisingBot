@@ -162,7 +162,7 @@ exports.run = function(api, event) {
         var savedModules  = user.saved_modules;
         savedModules.push(currentModule);
         // TODO unique on slug or title
-        uniqueModules = _.unique(savedModules);
+        uniqueModules = utils.saveUniqueObjects(savedModules);
         user.saved_modules = [];
         user.saved_modules = uniqueModules;
         //user.saved_modules.push(currentModule);
