@@ -13,3 +13,16 @@ exports.checkForFull = function(module) {
         return module;
     }
 };
+
+exports.saveUniqueObjects = function(objects) {
+    var list = {};
+
+    for ( var i=0, len = objects.length; i < len ; i++ ) {
+        list[objects[i].simple_id] = objects[i];
+    }
+    objects = [];
+    for ( var key in list ) {
+        objects.push(list[key]);
+    }
+    return objects;
+};
