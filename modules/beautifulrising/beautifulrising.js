@@ -25,6 +25,7 @@ exports.match = function (event, commandPrefix) {
         || event.arguments[0] === commandPrefix + 'search'
         || event.arguments[0] === commandPrefix + 'settings'
         || event.arguments[0] === commandPrefix + 'save'
+        || event.arguments[0] === commandPrefix + 'saved'
         || event.arguments[0] === commandPrefix + 'more'
         || event.arguments[0] === commandPrefix + 'full'
         || event.arguments[0] === commandPrefix + 'images'
@@ -152,6 +153,14 @@ exports.run = function(api, event) {
         user.saved_modules = [];
         user.saved_modules = uniqueModules;
         source = text['action-save']; 
+        source = utils.ensureString(source);
+        template = Handlebars.compile(source);
+        replyText = template({ "event": event, "config": "", "user": user, "command": command });
+    } else if ( event.arguments[0] === command + 'saved' ) {
+        //=================================================================
+        // User sent /saved command
+        //=================================================================
+        source = text['action-show-saved']; 
         source = utils.ensureString(source);
         template = Handlebars.compile(source);
         replyText = template({ "event": event, "config": "", "user": user, "command": command });
