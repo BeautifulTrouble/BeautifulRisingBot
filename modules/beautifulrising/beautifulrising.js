@@ -117,8 +117,7 @@ exports.run = function(api, event) {
         //=================================================================
         // User sent /search command
         //=================================================================
-        var query = event.arguments[1];
-        console.debug("The query was: " + query);
+        // TODO explore if these should be pulled from CONFIG?
         var searchOptions = {
           caseSensitive: false,
           includeScore: false,
@@ -131,13 +130,20 @@ exports.run = function(api, event) {
           keys: ["title"]
         };
         var fuse = new Fuse(modules, searchOptions);
-        var results = fuse.search(query);
-        var resultsCount = results.length;
-        source = text['iterator-module-search-results'];
+        var results;
+        var resultsCount;
+        var query = event.arguments[1];
+        console.debug("The query was: " + query);
+        if ( query !== undefined ) {
+            results = fuse.search(query);
+            resultsCount = results.length;
+            source = text['iterator-module-search-results'];
+        } else {
+            source = text['error-no-search-query'] || 'No search query';
+        }
         source = utils.ensureString(source);
         template = Handlebars.compile(source);
         replyText = template({ "event": event, "config": "", "user": user, "command": command, "count": resultsCount, "modules": results });
-        
     } else if ( event.arguments[0] === command + 'settings' ) {
         //=================================================================
         // User sent /settings command
