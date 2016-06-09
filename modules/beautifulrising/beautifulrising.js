@@ -136,7 +136,11 @@ exports.run = function(api, event) {
         console.debug("The query was: " + query);
         if ( query !== undefined ) {
             results = fuse.search(query);
-            resultsCount = results.length;
+            if ( results.length === 0 ) {
+                resultsCount = undefined;
+            } else {
+                resultsCount = results.length;
+            }
             source = text['iterator-module-search-results'];
         } else {
             source = text['error-no-search-query'] || 'No search query';
