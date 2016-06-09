@@ -9,12 +9,6 @@ var config;
 var users = [];
 var commandPrefix;
 var modulesRegex;
-// Helpers to be written
-//
-// getCurrentModule
-// saveModule
-// setLanguage
-// removeMarkdown
 var utils = require('./utils.js');
 
 exports.match = function (event, commandPrefix) {
@@ -42,9 +36,7 @@ exports.match = function (event, commandPrefix) {
 exports.load = function() {
     // TODO 
     // If undefined, create this
-    users = exports.config.users;
-    console.log(users);
-
+    users = utils.loadUsers(exports.config);
     var API_URL = "https://api.beautifulrising.org/api/v1";
     var botflow = API_URL + "/text/botflow";
     var modulesEndpoint = API_URL + "/all";
@@ -57,7 +49,7 @@ exports.load = function() {
     // Get the module objects from the API
     request.get(modulesEndpoint, 
         function(error, response, body) {
-            console.log('Got the modules');
+            console.debug('Got the modules');
             var modulesNoId = JSON.parse(body);
             // Create a simpleId from the slug & add it to the objects
             modules = _.map(modulesNoId, function(module) {
@@ -75,7 +67,6 @@ exports.load = function() {
 };
 
 exports.run = function(api, event) {
-    //console.log(event, api);
     var argument = event.arguments[0];
     var user = _.findWhere(users, { id: event.sender_id });
     if ( user === undefined ) {
@@ -126,7 +117,7 @@ exports.run = function(api, event) {
         // User sent /search command
         //=================================================================
         var query = event.arguments[1];
-        console.log(query);
+        console.debug("The query was: " + query);
         var searchOptions = {
           caseSensitive: false,
           includeScore: false,
@@ -140,14 +131,11 @@ exports.run = function(api, event) {
         };
         var fuse = new Fuse(modules, searchOptions);
         var results = fuse.search(query);
-        console.log(results.length);
         var resultsCount = results.length;
-        // TODO move this to a function that iterates through modules and handles the display of each
-        // TODO move this string to botflow Google Doc + Handlebars
-        replyText = "I've found " + resultsCount + " modules for you:\n";
-        _.each(results, function(module) { 
-            replyText += module.title + "\n➡ " + command + "read" + module.simple_id + "\n";
-        });
+        source = text['iterator-module-search-results'];
+        source = utils.ensureString(source);
+        template = Handlebars.compile(source);
+        replyText = template({ "event": event, "config": "", "user": user, "command": command, "count": resultsCount, "modules": results });
         
     } else if ( event.arguments[0] === command + 'settings' ) {
         //=================================================================
@@ -158,40 +146,48 @@ exports.run = function(api, event) {
         //=================================================================
         // User sent /save command
         //=================================================================
-        // TODO check for currentModule --> Move to function
         var savedModules  = user.saved_modules;
         savedModules.push(currentModule);
-        // TODO unique on slug or title
         uniqueModules = utils.saveUniqueObjects(savedModules);
         user.saved_modules = [];
         user.saved_modules = uniqueModules;
-        //user.saved_modules.push(currentModule);
-        source = text['action-save'] || 'Alternate template';
+        source = text['action-save']; 
+        source = utils.ensureString(source);
         template = Handlebars.compile(source);
         replyText = template({ "event": event, "config": "", "user": user, "command": command });
     } else if ( event.arguments[0] === command + 'more' ) {
         //=================================================================
         // User sent /more command
         //=================================================================
-        // TODO check for currentModule --> Move to function
-        module = _.findWhere(modules, { "title": currentModule.name });
-        source = module['short-write-up'] || 'Alternate template';
-        // TODO need a utility to check for source, or provide alternate template
+        if ( utils.currentModule(user) === undefined ) {
+            // No current module, return an error
+            source = text['error-no-current-module'];
+            module = {};
+        } else {
+            module = _.findWhere(modules, { "title": currentModule.name });
+            source = text['action-module-read-more'];
+            source = utils.ensureString(source);
+        }
+        var showFull = utils.checkForFull(module); 
         template = Handlebars.compile(source);
-        replyText = template({ "event": event, "config": "", "user": user, "command": command });
+        replyText = template({ "event": event, "config": "", "user": user, "command": command, "module": module, "text": text, "full": showFull });
         replyText = removeMd(replyText);
     } else if ( event.arguments[0] === command + 'full' ) {
         //=================================================================
-        // User sent /more command
+        // User sent /full command
         //=================================================================
-        // TODO check for currentModule --> Move to function
-        module = _.findWhere(modules, { "title": currentModule.name });
-        // TODO need a utility to check for source, or provide alternate template
-        source = module['full-write-up'] || 'Alternate template';
+        if ( utils.currentModule(user) === undefined ) {
+            // No current module, return an error
+            source = text['error-no-current-module'];
+            module = {};
+        } else {
+            module = _.findWhere(modules, { "title": currentModule.name });
+            source = text['action-module-read-full'];
+            source = utils.ensureString(source);
+        }
         template = Handlebars.compile(source);
-        replyText = template({ "event": event, "config": "", "user": user, "command": command });
+        replyText = template({ "event": event, "config": "", "user": user, "command": command, "module": module, "text": text });
         replyText = removeMd(replyText);
-
     } else if ( modulesRegex.test(argument) ) {
         //=================================================================
         // User asked for a list of modules by type
@@ -201,12 +197,10 @@ exports.run = function(api, event) {
         var type = config.relationships[typePlural];
         var filteredModules = _.filter(modules, function(module){ return module.type === type; });
         var count = filteredModules.length;
-        // TODO move this to a function that iterates through modules and handles the display of each
-        // TODO move this string to botflow Google Doc + Handlebars
-        replyText = "I've found " + count + " modules for you:\n";
-        _.each(filteredModules, function(module) { 
-            replyText += module.title + "\n➡ " + command + "read" + module.simple_id + "\n";
-        });
+        source = text['iterator-module-list'];
+        source = utils.ensureString(source);
+        template = Handlebars.compile(source);
+        replyText = template({ "event": event, "config": "", "user": user, "command": command, "count": count, "modules": filteredModules });
     } else if ( readRegex.test(argument) ) {
         //=================================================================
         // User asked for a specific module by id
@@ -214,17 +208,13 @@ exports.run = function(api, event) {
         var slug =  event.arguments[0];
         var moduleName = slug.replace(readRegex, '$1');
         var module = _.findWhere(modules, { simple_id: moduleName });
+        var more = utils.checkForMore(module); 
+        var full = utils.checkForFull(module); 
         user.currentModule = { "name": module.title, "simple_id": command + "read" + module.simple_id };
-        replyText = module.title + "\n" + module.snapshot;
-        if ( utils.checkForMore(module) ) { 
-            replyText += ''; // TODO text[action-more]
-            replyText += "\n" + command + 'more';
-        } 
-        if ( utils.checkForFull(module) ) {
-            replyText += "\n" + text['action-read-full'];
-            replyText += " " + command + 'full';
-        }
-        // TODO send /more or /full based on what properties are present
+        source = text['action-module-read'];
+        source = utils.ensureString(source);
+        template = Handlebars.compile(source);
+        replyText = template({ "event": event, "config": "", "user": user, "command": command, "module": module, "more": more, "full": full, "text": text});
     } if ( replyText !== '' ) {
         //=================================================================
         // If there's a replyText string, send it to the user
@@ -233,6 +223,5 @@ exports.run = function(api, event) {
     }
 };
 exports.unload = function() {
-    console.log(users);
     exports.config.users = users;
 };
