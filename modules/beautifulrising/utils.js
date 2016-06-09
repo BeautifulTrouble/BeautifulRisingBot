@@ -20,7 +20,12 @@ exports.checkForMore = function(module) {
 
 exports.checkForFull = function(module) {
     if ( module['full-write-up'] !== undefined ) {
-        return module;
+        // TODO remove this when the docs are fixed
+        // ... currently, there's content in full-write-up in snapshots & galleries,
+        // so we'll skip anything that has that in the document_title for now
+        if ( module.document_title.match(/SNAPSHOT/g) === null && module.document_title.match(/GALLERY/g) === null ) {
+            return module;
+        }
     }
 };
 
