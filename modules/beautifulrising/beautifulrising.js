@@ -14,7 +14,7 @@ var utils = require('./utils.js');
 exports.match = function (event, commandPrefix) {
     command = commandPrefix;
     // All complex commands start with a regular expression
-    modulesRegex = new RegExp("^" + commandPrefix + "tactics|stories|methodologies|principles");
+    modulesRegex = new RegExp("^" + commandPrefix + "tactics|stories|methodologies|principles|theories");
     readRegex    = new RegExp("^" + commandPrefix + "read(.*)$");
     var argument = event.arguments[0];
     // All basic commands get added here
