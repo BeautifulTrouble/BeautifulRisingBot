@@ -10,6 +10,34 @@ var users = [];
 var commandPrefix;
 var modulesRegex;
 var utils = require('./utils.js');
+// TODO move all of this to its own logging.js
+// Set up logging
+var winston = require.safe('winston');
+var winstonCouch = require.safe('winston-couchdb').Couchdb;
+// Configure the basic file logger
+winston.loggers.add('filelog', {
+    console: {
+        colorize: true,
+        label: 'log-file'
+    },
+    file: {
+        filename: './winston.log'
+    }
+});
+// Configure the couchdb logger
+winston.loggers.add('couchlog', {
+    console: {
+        colorize: true,
+        label: 'log-couch'
+    },
+    couchdb: {
+      host: 'localhost',
+      port: 5984
+    }
+});
+var couchlog = winston.loggers.get('couchlog');
+var filelog = winston.loggers.get('filelog');
+filelog.info('The bot was started or restarted');
 
 exports.match = function (event, commandPrefix) {
     command = commandPrefix;
@@ -51,6 +79,7 @@ exports.load = function() {
     request.get(modulesEndpoint, 
         function(error, response, body) {
             console.debug('Got the modules');
+            filelog.info('Modules loaded');
             var modulesNoId = JSON.parse(body);
             // Create a simpleId from the slug & add it to the objects
             modules = _.map(modulesNoId, function(module) {
@@ -238,6 +267,7 @@ exports.run = function(api, event) {
         //=================================================================
         // If there's a replyText string, send it to the user
         //=================================================================
+        couchlog.info('Received %s from %s', event.arguments[0], user.name, { "message_id": event.thread_id, "command":  event.arguments[0], "user": user.name, "response": replyText }); 
         api.sendMessage(replyText, event.thread_id);
     }
 };
