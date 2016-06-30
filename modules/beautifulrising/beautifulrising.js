@@ -1,6 +1,7 @@
 var Handlebars = require.safe('handlebars');
 var request = require.safe('request');
 var _ = require.safe('underscore');
+var s = require("underscore.string");
 var removeMd = require.safe('remove-markdown');
 var Fuse = require.safe('fuse.js');
 var text;
@@ -267,7 +268,7 @@ exports.run = function(api, event) {
         //=================================================================
         // If there's a replyText string, send it to the user
         //=================================================================
-        couchlog.info('Received %s from %s', event.arguments[0], user.name, { "message_id": event.thread_id, "command":  event.arguments[0], "user": user.name, "response": replyText }); 
+        couchlog.info('Received %s from %s', event.arguments[0], user.name, { "message_id": event.thread_id, "command":  event.arguments[0], "user": user.name, "response": s.truncate(replyText, 256) }); 
         api.sendMessage(replyText, event.thread_id);
     }
 };
