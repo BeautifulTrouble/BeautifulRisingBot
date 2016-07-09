@@ -271,6 +271,13 @@ exports.run = function(api, event) {
         //=================================================================
         couchlog.info('Received %s from %s', event.arguments[0], user.name, { "message_id": event.thread_id, "command":  event.arguments[0], "user": user.name, "response": s.truncate(replyText, 256) }); 
         api.sendMessage(replyText, event.thread_id);
+    } else {
+        source = text['error-no-such-command'];
+        source = utils.ensureString(source);
+        template = Handlebars.compile(source);
+        replyText = template({ "event": event, "config": "", "user": user, "command": command });
+        api.sendMessage(replyText, event.thread_id);
+        couchlog.info('Received %s from %s', event.arguments[0], user.name, { "message_id": event.thread_id, "command":  event.arguments[0], "user": user.name, "response": "No command matched" }); 
     }
 };
 exports.unload = function() {
