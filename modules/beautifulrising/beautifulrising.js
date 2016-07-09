@@ -59,7 +59,8 @@ exports.match = function (event, commandPrefix) {
         || event.arguments[0] === commandPrefix + 'full'
         || event.arguments[0] === commandPrefix + 'images'
         || modulesRegex.test(argument)
-        || readRegex.test(argument);
+        || readRegex.test(argument)
+        || true; // Match everything for logging
 };
 
 
