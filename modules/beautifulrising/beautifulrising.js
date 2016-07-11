@@ -99,23 +99,31 @@ exports.load = function() {
         function(error, response, body) {
             config = JSON.parse(body);
     });
+    db.view('users/all', function (err, res) {
+        if ( err && err.error === 'not_found' ) {
+            // If the view is not there, create it!
+            db.save('_design/users', {
+              all: {
+                  map: function (doc) {
+                      if (doc.name) emit(doc.name, doc);
+                  }
+              },
+            });
+        }
+    });
 };
 
-exports.run = function(api, event) {
+var processMessage = function(api, event, record) {
+    var user = record;
     var argument = event.arguments[0];
-    var user = _.findWhere(users, { id: event.sender_id });
-    if ( user === undefined ) {
-        // If the user is not defined, then they're a first time user
-        user = { id: event.sender_id, name: event.sender_name, first_seen: new Date(), saved_modules: [] };
-        users.push(user);
-    } else {
-        // Otherwise, they're a returning user
-        user.returning = 1;
-    }
     var source = '';
     var template = '';
     var replyText = '';
     var currentModule = user.currentModule;
+    // Mark the user as returning
+    user.returning = 1;
+    // Increment that we saw the user
+    user.interactions++;
     if ( event.arguments[0] === command + 'start' ) {
         //=================================================================
         // User sent /start command (could send this always for new users)
@@ -191,7 +199,7 @@ exports.run = function(api, event) {
         //=================================================================
         // User sent /save command
         //=================================================================
-        var savedModules  = user.saved_modules;
+        var savedModules  = user.saved_modules || [];
         savedModules.push(currentModule);
         uniqueModules = utils.saveUniqueObjects(savedModules);
         user.saved_modules = [];
@@ -272,17 +280,69 @@ exports.run = function(api, event) {
         //=================================================================
         // If there's a replyText string, send it to the user
         //=================================================================
+        // 
+        // Log the response
         couchlog.info('Received %s from %s', event.arguments[0], user.name, { "message_id": event.thread_id, "command":  event.arguments[0], "user": user.name, "response": s.truncate(replyText, 256) }); 
+        // Send it to the user
         api.sendMessage(replyText, event.thread_id);
     } else {
+        // Right now, this will not fire becasue of the loop it creates with Skype
         source = text['error-no-such-command'];
         source = utils.ensureString(source);
         template = Handlebars.compile(source);
         replyText = template({ "event": event, "config": "", "user": user, "command": command });
-        api.sendMessage(replyText, event.thread_id);
+        // Log the response
         couchlog.info('Received %s from %s', event.arguments[0], user.name, { "message_id": event.thread_id, "command":  event.arguments[0], "user": user.name, "response": "No command matched" }); 
+        // Send it to the user
+        api.sendMessage(replyText, event.thread_id);
     }
+    db.save(user.id, user.rev, user, function(err, res) { // Persist the user
+        if (err) {
+            console.log(err);
+        } else { 
+
+        }
+    });
 };
+
+exports.run = function(api, event) {
+     var userFullName = event.sender_name + '-' + event.sender_id;
+     var userFullId = 'org.couchdb.user:' + userFullName;
+     db.get(userFullId, function (err, doc) {
+          if ( err ) {
+              console.log(err);
+              if (err.error === 'not_found') { // No user, create one
+             console.log(event);
+                user = { // Object that we want to persist
+                    sender_id: event.sender_id,
+                    name: userFullName,
+                    name_pretty: event.sender_name,
+                    first_seen: new Date(), 
+                    currentModule: "",
+                    savedModules: [], 
+                    returning: 0,
+                    interactions: 0,
+                    password: password(3), 
+                    roles: ['bot_user'], 
+                    type: "user" };
+                  // Note: to put a new user in CouchDB's _users table
+                  // the documentid and name must match
+                  db.save(userFullId, user, function(err, res) {
+                      if (err) {
+                          console.log(err);
+                        console.log(event);
+                      } else {
+                          module.exports.run(api, event);
+                      }
+                  });
+            }
+          } else {
+               processMessage(api, event, doc);
+          }
+      });    
+};
+
+
 exports.unload = function() {
-    exports.config.users = users;
+
 };
