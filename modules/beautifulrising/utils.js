@@ -1,15 +1,20 @@
+var cradle = require.safe('cradle'); // Persistance
+var db = new(cradle.Connection)().database('_users');
+
 exports.test = function() {
     console.log('Running test...');
 };
 
+
+// CouchDB functions, not used for now
 exports.loadUsers = function(config) {
-    if ( config.hasOwnProperty("users") ) {
-        return config.users;
-    } else {
-        // If it's not there, create it
-        config.users = [ ];
-        return config.users;
-    }
+};
+
+
+exports.returnUsers = function() {
+};
+
+exports.userSave = function(user) {
 };
 
 exports.checkForMore = function(module) {
