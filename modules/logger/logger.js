@@ -35,7 +35,8 @@ exports.help = function() {
 
 exports.run = function(api, event) {
         var command = api.commandPrefix;
-        couchlog.info('Received %s from %s', event.arguments[0], event.sender_name, { "message_id": event.thread_id, "command":  event.arguments[0], "user": event.sender_name, "response": "No command matched" }); 
+        var userFullName = event.sender_name + '-' + event.sender_id;
+        couchlog.info('Received %s from %s', event.arguments[0], userFullName, { "message_id": event.thread_id, "command":  event.arguments[0], "user": userFullName, "response": "No command matched" }); 
     // This needs to pull from botflow and provide translations
         api.sendMessage('Ooops, I’m not sure what module you’re talking about. Try finding a module first using the ' + command + 'menu or ' + command + 'search command.' , event.thread_id);
 };
