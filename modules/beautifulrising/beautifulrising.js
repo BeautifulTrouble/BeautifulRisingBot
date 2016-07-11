@@ -1,24 +1,26 @@
-var Handlebars = require.safe('handlebars');
-var request = require.safe('request');
-var _ = require.safe('underscore');
+var Handlebars = require('handlebars');
+var request = require('request');
+var _ = require('underscore');
 var s = require("underscore.string");
-var removeMd = require.safe('remove-markdown');
-var Fuse = require.safe('fuse.js');
+var removeMd = require('remove-markdown');
+var Fuse = require('fuse.js');
 var text;
 var modules;
 var config;
 var users = [];
-var commandPrefix;
+var command;
 var modulesRegex;
+var readRegex;
+var uniqueModules;
 var utils = require('./utils.js');
 var password = require('password');
-var cradle = require.safe('cradle'); // Persistance
+var cradle = require('cradle'); // Persistance
 var db = new(cradle.Connection)().database('_users');
 
 // TODO move all of this to its own logging.js
 // Set up logging
-var winston = require.safe('winston');
-var winstonCouch = require.safe('winston-couchdb').Couchdb;
+var winston = require('winston');
+var winstonCouch = require('winston-couchdb').Couchdb;
 // Configure the basic file logger
 winston.loggers.add('filelog', {
     console: {
@@ -120,17 +122,17 @@ var processMessage = function(api, event, record) {
     var template = '';
     var replyText = '';
     var currentModule = user.currentModule;
-    // Mark the user as returning
-    user.returning = 1;
-    // Increment that we saw the user
-    user.interactions++;
     if ( event.arguments[0] === command + 'start' ) {
         //=================================================================
         // User sent /start command (could send this always for new users)
         //=================================================================
+        var returning;
+        if ( user.returning === 1 ) { 
+            returning = 'true';
+        }
         source = text['action-start'];
         template = Handlebars.compile(source);
-        replyText = template({ "event": event, "config": "", "user": user, "command": command });
+        replyText = template({ "event": event, "config": "", "user": user, "command": command, "returning": returning });
     } else if ( event.arguments[0] === command + 'define' ) {
         //=================================================================
         // User sent /define command
@@ -285,6 +287,10 @@ var processMessage = function(api, event, record) {
         couchlog.info('Received %s from %s', event.arguments[0], user.name, { "message_id": event.thread_id, "command":  event.arguments[0], "user": user.name, "response": s.truncate(replyText, 256) }); 
         // Send it to the user
         api.sendMessage(replyText, event.thread_id);
+        // Mark the user as returning
+        user.returning = 1;
+        // Increment that we saw the user
+        user.interactions++;
     } else {
         // Right now, this will not fire becasue of the loop it creates with Skype
         source = text['error-no-such-command'];
@@ -294,6 +300,10 @@ var processMessage = function(api, event, record) {
         // Log the response
         couchlog.info('Received %s from %s', event.arguments[0], user.name, { "message_id": event.thread_id, "command":  event.arguments[0], "user": user.name, "response": "No command matched" }); 
         // Send it to the user
+        // Mark the user as returning
+        user.returning = 1;
+        // Increment that we saw the user
+        user.interactions++;
         api.sendMessage(replyText, event.thread_id);
     }
     db.save(user.id, user.rev, user, function(err, res) { // Persist the user
@@ -306,6 +316,7 @@ var processMessage = function(api, event, record) {
 };
 
 exports.run = function(api, event) {
+    console.log(event);
      var userFullName = event.sender_name + '-' + event.sender_id;
      var userFullId = 'org.couchdb.user:' + userFullName;
      db.get(userFullId, function (err, doc) {
@@ -318,6 +329,7 @@ exports.run = function(api, event) {
                     name: userFullName,
                     name_pretty: event.sender_name,
                     first_seen: new Date(), 
+                    platform: event.event_source,
                     currentModule: "",
                     savedModules: [], 
                     returning: 0,
