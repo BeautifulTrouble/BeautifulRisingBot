@@ -11,6 +11,10 @@ var users = [];
 var commandPrefix;
 var modulesRegex;
 var utils = require('./utils.js');
+var password = require('password');
+var cradle = require.safe('cradle'); // Persistance
+var db = new(cradle.Connection)().database('_users');
+
 // TODO move all of this to its own logging.js
 // Set up logging
 var winston = require.safe('winston');
