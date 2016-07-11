@@ -1,4 +1,4 @@
-var cradle = require.safe('cradle'); // Persistance
+var cradle = require('cradle'); // Persistance
 var db = new(cradle.Connection)().database('_users');
 
 exports.test = function() {
