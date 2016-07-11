@@ -38,8 +38,8 @@ winston.loggers.add('couchlog', {
         label: 'log-couch'
     },
     couchdb: {
-      host: 'localhost',
-      port: 5984
+        host: 'localhost',
+        port: 5984
     }
 });
 var couchlog = winston.loggers.get('couchlog');
@@ -55,6 +55,7 @@ exports.match = function (event, commandPrefix) {
     // All basic commands get added here
     return event.arguments[0] === commandPrefix + 'start' 
         || event.arguments[0] === commandPrefix + 'menu' 
+        || event.arguments[0] === commandPrefix + 'help' 
         || event.arguments[0] === commandPrefix + 'define'
         || event.arguments[0] === commandPrefix + 'menu'
         || event.arguments[0] === commandPrefix + 'search'
@@ -66,7 +67,6 @@ exports.match = function (event, commandPrefix) {
         || event.arguments[0] === commandPrefix + 'images'
         || modulesRegex.test(argument)
         || readRegex.test(argument);
-        //|| true; // Match everything for logging (**but** with Skype, causes a crazy loop)
 };
 
 
@@ -79,37 +79,37 @@ exports.load = function() {
     var configEndpoint = API_URL + "/config";
     // Get the bot-related objects from the API
     request.get(botflow, 
-        function(error, response, body) {
-            text = JSON.parse(body);
-    });
+                function(error, response, body) {
+                    text = JSON.parse(body);
+                });
     // Get the module objects from the API
     request.get(modulesEndpoint, 
-        function(error, response, body) {
-            console.debug('Got the modules');
-            filelog.info('Modules loaded');
-            var modulesNoId = JSON.parse(body);
-            // Create a simpleId from the slug & add it to the objects
-            modules = _.map(modulesNoId, function(module) {
-                var slug = module.slug;
-                var simpleId = slug.replace(/-/ig, '');
-                module.simple_id = simpleId;
-                return module;
-        });
-    });
+                function(error, response, body) {
+                    console.debug('Got the modules');
+                    filelog.info('Modules loaded');
+                    var modulesNoId = JSON.parse(body);
+                    // Create a simpleId from the slug & add it to the objects
+                    modules = _.map(modulesNoId, function(module) {
+                        var slug = module.slug;
+                        var simpleId = slug.replace(/-/ig, '');
+                        module.simple_id = simpleId;
+                        return module;
+                    });
+                });
     // Get the config object from the API
     request.get(configEndpoint, 
-        function(error, response, body) {
-            config = JSON.parse(body);
-    });
+                function(error, response, body) {
+                    config = JSON.parse(body);
+                });
     db.view('users/all', function (err, res) {
         if ( err && err.error === 'not_found' ) {
             // If the view is not there, create it!
             db.save('_design/users', {
-              all: {
-                  map: function (doc) {
-                      if (doc.name) emit(doc.name, doc);
-                  }
-              },
+                all: {
+                    map: function (doc) {
+                        if (doc.name) emit(doc.name, doc);
+                    }
+                },
             });
         }
     });
@@ -149,7 +149,7 @@ var processMessage = function(api, event, record) {
         // - Language preference
         // - E-mail address
         // - Twitter, etc.
-    } else if ( event.arguments[0] === command + 'menu' ) {
+    } else if ( event.arguments[0] === command + 'menu' || event.arguments[0] === command + 'help' ) {
         //=================================================================
         // User sent /menu command
         //=================================================================
@@ -163,21 +163,21 @@ var processMessage = function(api, event, record) {
         //=================================================================
         // TODO explore if these should be pulled from CONFIG?
         var searchOptions = {
-          caseSensitive: false,
-          includeScore: false,
-          shouldSort: true,
-          tokenize: false,
-          threshold: 0.3,
-          location: 0,
-          distance: 100,
-          maxPatternLength: 32,
-          keys: ["title"]
+            caseSensitive: false,
+            includeScore: false,
+            shouldSort: true,
+            tokenize: false,
+            threshold: 0.3,
+            location: 0,
+            distance: 100,
+            maxPatternLength: 32,
+            keys: ["title"]
         };
         var fuse = new Fuse(modules, searchOptions);
         var results;
         var resultsCount;
         var query = event.arguments[1];
-        console.debug("The query was: " + query);
+        filelog.info("The query was: " + query);
         if ( query !== undefined ) {
             results = fuse.search(query);
             if ( results.length === 0 ) {
@@ -308,7 +308,7 @@ var processMessage = function(api, event, record) {
     }
     db.save(user.id, user.rev, user, function(err, res) { // Persist the user
         if (err) {
-            console.log(err);
+            filelog.info(err);
         } else { 
 
         }
@@ -316,14 +316,12 @@ var processMessage = function(api, event, record) {
 };
 
 exports.run = function(api, event) {
-    console.log(event);
-     var userFullName = event.sender_name + '-' + event.sender_id;
-     var userFullId = 'org.couchdb.user:' + userFullName;
-     db.get(userFullId, function (err, doc) {
-          if ( err ) {
-              console.log(err);
-              if (err.error === 'not_found') { // No user, create one
-             console.log(event);
+    var userFullName = event.sender_name + '-' + event.sender_id;
+    var userFullId = 'org.couchdb.user:' + userFullName;
+    db.get(userFullId, function (err, doc) {
+        if ( err ) {
+            filelog.info(err);
+            if (err.error === 'not_found') { // No user, create one
                 user = { // Object that we want to persist
                     sender_id: event.sender_id,
                     name: userFullName,
@@ -337,24 +335,23 @@ exports.run = function(api, event) {
                     password: password(3), 
                     roles: ['bot_user'], 
                     type: "user" };
-                  // Note: to put a new user in CouchDB's _users table
-                  // the documentid and name must match
-                  db.save(userFullId, user, function(err, res) {
-                      if (err) {
-                          console.log(err);
-                        console.log(event);
-                      } else {
-                          module.exports.run(api, event);
-                      }
-                  });
+                    // Note: to put a new user in CouchDB's _users table
+                    // the documentid and name must match
+                    db.save(userFullId, user, function(err, res) {
+                        if (err) {
+                            filelog.info(err);
+                        } else {
+                            module.exports.run(api, event);
+                        }
+                    });
             }
-          } else {
-               processMessage(api, event, doc);
-          }
-      });    
+        } else {
+            processMessage(api, event, doc);
+        }
+    });    
 };
 
 
 exports.unload = function() {
-
+            filelog.info("The beautifulrising module is shutting down");
 };
