@@ -63,15 +63,14 @@ exports.match = function (event, commandPrefix) {
         || event.arguments[0] === commandPrefix + 'full'
         || event.arguments[0] === commandPrefix + 'images'
         || modulesRegex.test(argument)
-        || readRegex.test(argument)
-        || true; // Match everything for logging
+        || readRegex.test(argument);
+        //|| true; // Match everything for logging (**but** with Skype, causes a crazy loop)
 };
 
 
 exports.load = function() {
     // TODO 
     // If undefined, create this
-    users = utils.loadUsers(exports.config);
     var API_URL = "https://api.beautifulrising.org/api/v1";
     var botflow = API_URL + "/text/botflow";
     var modulesEndpoint = API_URL + "/all";
