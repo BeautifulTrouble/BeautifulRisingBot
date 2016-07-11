@@ -1,0 +1,6 @@
+{
+    "name":"logger",
+    "version":1.0,
+    "priority":"last",
+    "startup":"logger.js"
+}
