@@ -49,13 +49,13 @@ filelog.info('The bot was started or restarted');
 exports.match = function (event, commandPrefix) {
     command = commandPrefix;
     // All complex commands start with a regular expression
-    modulesRegex = new RegExp("^" + commandPrefix + "tactics|stories|methodologies|principles|theories");
+    modulesRegex = new RegExp("^" + commandPrefix + "tactics|stories|methodologies|principles|theories|people");
     readRegex    = new RegExp("^" + commandPrefix + "read(.*)$");
     var argument = event.arguments[0];
     // All basic commands get added here
-    return event.arguments[0] === commandPrefix + 'start' 
-        || event.arguments[0] === commandPrefix + 'menu' 
-        || event.arguments[0] === commandPrefix + 'help' 
+    return event.arguments[0] === commandPrefix + 'start'
+        || event.arguments[0] === commandPrefix + 'menu'
+        || event.arguments[0] === commandPrefix + 'help'
         || event.arguments[0] === commandPrefix + 'define'
         || event.arguments[0] === commandPrefix + 'menu'
         || event.arguments[0] === commandPrefix + 'search'
@@ -71,19 +71,19 @@ exports.match = function (event, commandPrefix) {
 
 
 exports.load = function() {
-    // TODO 
-    // If undefined, create this
     var API_URL = "https://api.beautifulrising.org/api/v1";
     var botflow = API_URL + "/text/botflow";
     var modulesEndpoint = API_URL + "/all";
     var configEndpoint = API_URL + "/config";
     // Get the bot-related objects from the API
-    request.get(botflow, 
+    request.get(botflow,
                 function(error, response, body) {
+                    // TODO Language can be controlled through this variable
+                    // E.g., text['en'] text['ar'] ...
                     text = JSON.parse(body);
                 });
     // Get the module objects from the API
-    request.get(modulesEndpoint, 
+    request.get(modulesEndpoint,
                 function(error, response, body) {
                     console.debug('Got the modules');
                     filelog.info('Modules loaded');
@@ -97,7 +97,7 @@ exports.load = function() {
                     });
                 });
     // Get the config object from the API
-    request.get(configEndpoint, 
+    request.get(configEndpoint,
                 function(error, response, body) {
                     config = JSON.parse(body);
                 });
@@ -159,7 +159,7 @@ var processMessage = function(api, event, record) {
         source = text['action-menu'];
         template = Handlebars.compile(source);
         replyText = template({ "event": event, "config": "", "user": user, "command": command });
-        // TODO 
+        // TODO
     } else if ( event.arguments[0] === command + 'search' ) {
         //=================================================================
         // User sent /search command
@@ -199,7 +199,7 @@ var processMessage = function(api, event, record) {
         //=================================================================
         // User sent /settings command
         //=================================================================
-        // TODO 
+        // TODO
     } else if ( event.arguments[0] === command + 'save' ) {
         //=================================================================
         // User sent /save command
@@ -209,7 +209,7 @@ var processMessage = function(api, event, record) {
         uniqueModules = utils.saveUniqueObjects(savedModules);
         user.saved_modules = [];
         user.saved_modules = uniqueModules;
-        source = text['action-save']; 
+        source = text['action-save'];
         source = utils.ensureString(source);
         template = Handlebars.compile(source);
         replyText = template({ "event": event, "config": "", "user": user, "command": command });
@@ -217,7 +217,7 @@ var processMessage = function(api, event, record) {
         //=================================================================
         // User sent /saved command
         //=================================================================
-        source = text['action-show-saved']; 
+        source = text['action-show-saved'];
         source = utils.ensureString(source);
         template = Handlebars.compile(source);
         replyText = template({ "event": event, "config": "", "user": user, "command": command });
@@ -234,7 +234,7 @@ var processMessage = function(api, event, record) {
             source = text['action-module-read-more'];
             source = utils.ensureString(source);
         }
-        var showFull = utils.checkForFull(module); 
+        var showFull = utils.checkForFull(module);
         template = Handlebars.compile(source);
         replyText = template({ "event": event, "config": "", "user": user, "command": command, "module": module, "text": text, "full": showFull });
         replyText = removeMd(replyText);
@@ -274,8 +274,8 @@ var processMessage = function(api, event, record) {
         var slug =  event.arguments[0];
         var moduleName = slug.replace(readRegex, '$1');
         var module = _.findWhere(modules, { simple_id: moduleName });
-        var more = utils.checkForMore(module); 
-        var full = utils.checkForFull(module); 
+        var more = utils.checkForMore(module);
+        var full = utils.checkForFull(module);
         user.currentModule = { "name": module.title, "simple_id": command + "read" + module.simple_id };
         source = text['action-module-read'];
         source = utils.ensureString(source);
@@ -285,9 +285,9 @@ var processMessage = function(api, event, record) {
         //=================================================================
         // If there's a replyText string, send it to the user
         //=================================================================
-        // 
+        //
         // Log the response
-        couchlog.info('Received %s from %s', event.arguments[0], user.name, { "message_id": event.thread_id, "command":  event.arguments[0], "user": user.name, "response": s.truncate(replyText, 256) }); 
+        couchlog.info('Received %s from %s', event.arguments[0], user.name, { "message_id": event.thread_id, "command":  event.arguments[0], "user": user.name, "response": s.truncate(replyText, 256) });
         // Send it to the user
         api.sendMessage(replyText, event.thread_id);
         // Mark the user as returning
@@ -301,7 +301,7 @@ var processMessage = function(api, event, record) {
         template = Handlebars.compile(source);
         replyText = template({ "event": event, "config": "", "user": user, "command": command });
         // Log the response
-        couchlog.info('Received %s from %s', event.arguments[0], user.name, { "message_id": event.thread_id, "command":  event.arguments[0], "user": user.name, "response": "No command matched" }); 
+        couchlog.info('Received %s from %s', event.arguments[0], user.name, { "message_id": event.thread_id, "command":  event.arguments[0], "user": user.name, "response": "No command matched" });
         // Send it to the user
         // Mark the user as returning
         user.returning = 1;
@@ -312,7 +312,7 @@ var processMessage = function(api, event, record) {
     db.save(user.id, user.rev, user, function(err, res) { // Persist the user
         if (err) {
             filelog.info(err);
-        } else { 
+        } else {
 
         }
     });
@@ -329,14 +329,14 @@ exports.run = function(api, event) {
                     sender_id: event.sender_id,
                     name: userFullName,
                     name_pretty: event.sender_name,
-                    first_seen: new Date(), 
+                    first_seen: new Date(),
                     platform: event.event_source,
                     currentModule: "",
-                    savedModules: [], 
+                    savedModules: [],
                     returning: 0,
                     interactions: 0,
-                    password: password(3), 
-                    roles: ['bot_user'], 
+                    password: password(3),
+                    roles: ['bot_user'],
                     type: "user" };
                     // Note: to put a new user in CouchDB's _users table
                     // the documentid and name must match
@@ -351,7 +351,7 @@ exports.run = function(api, event) {
         } else {
             processMessage(api, event, doc);
         }
-    });    
+    });
 };
 
 
