@@ -122,12 +122,15 @@ var processMessage = function(api, event, record) {
     var template = '';
     var replyText = '';
     var currentModule = user.currentModule;
+    // If the user has set a language, use it, otherwise EN
+    var language  = user.language || 'en';
+    text = text[language];
     if ( event.arguments[0] === command + 'start' ) {
         //=================================================================
         // User sent /start command (could send this always for new users)
         //=================================================================
         var returning;
-        if ( user.returning === 1 ) { 
+        if ( user.returning === 1 ) {
             returning = 'true';
         }
         source = text['action-start'];
