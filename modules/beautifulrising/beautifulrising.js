@@ -125,8 +125,6 @@ var processMessage = function(api, event, record) {
     // If the user has set a language, use it, otherwise EN
     var language  = user.language || 'en';
     text = texts[language];
-    console.log('Text is: ' );
-    console.log(text);
     if ( event.arguments[0] === command + 'start' ) {
         //=================================================================
         // User sent /start command (could send this always for new users)
@@ -265,8 +263,6 @@ var processMessage = function(api, event, record) {
         var type = config.relationships[typePlural];
         var filteredModules = _.filter(modules, function(module){ return module.type === type; });
         var count = filteredModules.length;
-        console.log('Text is now: ' );
-        console.log(text);
         source = text['iterator-module-list'];
         source = utils.ensureString(source);
         template = Handlebars.compile(source);

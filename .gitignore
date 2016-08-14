@@ -14,3 +14,5 @@ modules/kpm_*
 config.json.develop
 config.json.production
 _not_used_core_modules
+/restart.sh
+/telegram-test.js
