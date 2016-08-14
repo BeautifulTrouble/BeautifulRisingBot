@@ -4,7 +4,7 @@ var _ = require('underscore');
 var s = require("underscore.string");
 var removeMd = require('remove-markdown');
 var Fuse = require('fuse.js');
-var text;
+var texts;
 var modules;
 var config;
 var users = [];
@@ -80,7 +80,7 @@ exports.load = function() {
                 function(error, response, body) {
                     // TODO Language can be controlled through this variable
                     // E.g., text['en'] text['ar'] ...
-                    text = JSON.parse(body);
+                    texts = JSON.parse(body);
                 });
     // Get the module objects from the API
     request.get(modulesEndpoint,
@@ -124,7 +124,9 @@ var processMessage = function(api, event, record) {
     var currentModule = user.currentModule;
     // If the user has set a language, use it, otherwise EN
     var language  = user.language || 'en';
-    text = text[language];
+    text = texts[language];
+    console.log('Text is: ' );
+    console.log(text);
     if ( event.arguments[0] === command + 'start' ) {
         //=================================================================
         // User sent /start command (could send this always for new users)
@@ -263,6 +265,8 @@ var processMessage = function(api, event, record) {
         var type = config.relationships[typePlural];
         var filteredModules = _.filter(modules, function(module){ return module.type === type; });
         var count = filteredModules.length;
+        console.log('Text is now: ' );
+        console.log(text);
         source = text['iterator-module-list'];
         source = utils.ensureString(source);
         template = Handlebars.compile(source);
