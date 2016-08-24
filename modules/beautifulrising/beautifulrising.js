@@ -118,6 +118,9 @@ exports.load = function() {
                         module.simple_id = simpleId;
                         return module;
                     });
+                    modules = _.reject(modules, function(module) { 
+                        return module.type === 'person';
+                    });
                 });
     // Get the config object from the API
     request.get(configEndpoint,
