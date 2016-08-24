@@ -297,10 +297,17 @@ var processMessage = function(api, event, record) {
         var slug =  event.arguments[0];
         var moduleName = slug.replace(readRegex, '$1');
         var module = _.findWhere(modules, { simple_id: moduleName });
-        var more = utils.checkForMore(module);
-        var full = utils.checkForFull(module);
-        user.currentModule = { "name": module.title, "simple_id": command + "read" + module.simple_id };
-        source = text['action-module-read'];
+        var more;
+        var full;
+        // Do we even have a module to work with?
+        if ( module === undefined ) {
+            source = text['error-no-current-module'];
+        } else {
+            more = utils.checkForMore(module);
+            full = utils.checkForFull(module);
+            user.currentModule = { "name": module.title, "simple_id": command + "read" + module.simple_id };
+            source = text['action-module-read'];
+        }
         source = utils.ensureString(source);
         template = Handlebars.compile(source);
         replyText = template({ "event": event, "config": "", "user": user, "command": command, "module": module, "more": more, "full": full, "text": text});
