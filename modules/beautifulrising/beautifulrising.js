@@ -6,6 +6,7 @@ var removeMd = require('remove-markdown');
 var Fuse = require('fuse.js');
 var texts;
 var modules;
+var people;
 var config;
 var users = [];
 var command;
