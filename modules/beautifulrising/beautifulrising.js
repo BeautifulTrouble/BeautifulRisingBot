@@ -71,6 +71,7 @@ exports.match = function (event, commandPrefix) {
         || event.arguments[0] === commandPrefix + 'saved'
         || event.arguments[0] === commandPrefix + 'more'
         || event.arguments[0] === commandPrefix + 'full'
+        || event.arguments[0] === commandPrefix + 'related'
         || event.arguments[0] === commandPrefix + 'images'
         || modulesRegex.test(argument)
         || readRegex.test(argument);
@@ -80,7 +81,14 @@ exports.match = function (event, commandPrefix) {
 exports.load = function() {
     var API_URL = "https://api.beautifulrising.org/api/v1";
     var botflow = API_URL + "/text/botflow";
-    var modulesEndpoint = API_URL + "/all";
+    var allEndpoint = API_URL + "/all";
+    var modulesEndpoint = API_URL + "/modules";
+    var methodologiesEndpoint = API_URL + "/methodologies";
+    var principlesEndpoint = API_URL + "/principles";
+    var storiesEndpoint = API_URL + "/stories";
+    var tacticsEndpoint = API_URL + "/tactics";
+    var theoriesEndpoint = API_URL + "/theories";
+    var peopleEndpoint = API_URL + "/people";
     var configEndpoint = API_URL + "/config";
     // Get the bot-related objects from the API
     request.get(botflow,
@@ -90,21 +98,28 @@ exports.load = function() {
                     texts = JSON.parse(body);
                 });
     // Get the module objects from the API
+    // TODO remove this ridiculousness when there's a /modules endpoint 
     request.get(modulesEndpoint,
+        function(error, response, body) {
+            var modulesNoId = JSON.parse(body);
+            filelog.info('All modules loaded');
+            // Create a simpleId from the slug & add it to the objects
+            var modulesAll = _.map(modulesNoId, function(module) {
+                var slug = module.slug;
+                var simpleId = slug.replace(/-/ig, '');
+                module.simple_id = simpleId;
+                return module;
+            });
+            modules = _.reject(modulesAll, function(module) { 
+                    // Get rid of snapshots and gallery entries
+                    return module['module-type'] === 'snapshot';
+            });
+            console.debug("We have " + modules.length + " modules");
+    });
+    // Get the people objects from the API
+    request.get(peopleEndpoint,
                 function(error, response, body) {
-                    console.debug('Got the modules');
-                    filelog.info('Modules loaded');
-                    var modulesNoId = JSON.parse(body);
-                    // Create a simpleId from the slug & add it to the objects
-                    modules = _.map(modulesNoId, function(module) {
-                        var slug = module.slug;
-                        var simpleId = slug.replace(/-/ig, '');
-                        module.simple_id = simpleId;
-                        return module;
-                    });
-                    modules = _.reject(modules, function(module) { 
-                        return module.type === 'person';
-                    });
+                    people = JSON.parse(body);
                 });
     // Get the config object from the API
     request.get(configEndpoint,
@@ -259,6 +274,25 @@ var processMessage = function(api, event, record) {
         } else {
             module = _.findWhere(modules, { "title": currentModule.name });
             source = text['action-module-read-full'];
+            source = utils.ensureString(source);
+        }
+        template = Handlebars.compile(source);
+        replyText = template({ "event": event, "config": "", "user": user, "command": command, "module": module, "text": text });
+        replyText = removeMd(replyText);
+    } else if ( event.arguments[0] === command + 'related' ) {
+        //=================================================================
+        // User sent /related command
+        //=================================================================
+        // TODO this work is incomplete because we are not exposing the /related option yet
+        // TODO need to add a utility function to inflate related modules and add them to the module object
+        // TODO flag a module as having related content, so this menu item can be exposed
+        if ( utils.currentModule(user) === undefined ) {
+            // No current module, return an error
+            source = text['error-no-current-module'];
+            module = {};
+        } else {
+            module = _.findWhere(modules, { "title": currentModule.name });
+            source = text['action-module-related-modules'];
             source = utils.ensureString(source);
         }
         template = Handlebars.compile(source);
