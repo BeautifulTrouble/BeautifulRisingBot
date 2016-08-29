@@ -49,23 +49,6 @@ filelog.info('The bot was started or restarted');
 
 
 // Handlebars helpers
-Handlebars.registerHelper('byline', function(authors) {
-    var byline;
-    // TODO better handling two authors, then n authors
-    if ( authors.length === 1 ) {
-        var authorObj = _.findWhere(modules, { "slug": authors[0] });
-        byline = authorObj.title;
-    } else {
-        var people = [];
-        _.each(authors, function (author) { 
-            var authorObj = _.findWhere(modules, { "slug": author });
-            people.push(authorObj.title);
-        });
-        byline = people.join(', ');
-    }
-    console.log(byline);
-    return byline;
-});
 Handlebars.registerHelper('uppercase', function(str) {
     return str.toUpperCase();
 });
