@@ -98,7 +98,6 @@ exports.load = function() {
                     texts = JSON.parse(body);
                 });
     // Get the module objects from the API
-    // TODO remove this ridiculousness when there's a /modules endpoint 
     request.get(modulesEndpoint,
         function(error, response, body) {
             var modulesNoId = JSON.parse(body);
@@ -113,9 +112,7 @@ exports.load = function() {
                     var rel_slugs = module[related];
                     module[related] = [];
                     _.each(rel_slugs, function(s) {
-                        //console.log(s);
                         var rel_module = _.findWhere(modulesNoId, {slug: s });
-                        //console.log(rel_module);
                         module[related].push(rel_module);
                     });
                 });
@@ -270,7 +267,6 @@ var processMessage = function(api, event, record) {
             source = text['action-module-read-more'];
             source = utils.ensureString(source);
         }
-        console.log(source);
         var showFull = utils.checkForFull(module);
         template = Handlebars.compile(source);
         replyText = template({ "event": event, "config": "", "user": user, "command": command, "module": module, "text": text, "full": showFull });
@@ -339,7 +335,6 @@ var processMessage = function(api, event, record) {
         } else {
             more = utils.checkForMore(module);
             related = utils.checkForRelated(module);
-            console.log(related);
             full = utils.checkForFull(module);
             user.currentModule = { "name": module.title, "simple_id": command + "read" + module.simple_id };
             source = text['action-module-read'];
