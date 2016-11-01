@@ -80,7 +80,7 @@ exports.match = function (event, commandPrefix) {
 
 exports.load = function() {
     var API_URL = "https://api.beautifulrising.org/api/v1";
-    var botflow = API_URL + "/text/botflow";
+    var botflow = API_URL + "/text/botflow?v1";
     var allEndpoint = API_URL + "/all";
     var modulesEndpoint = API_URL + "/modules";
     var methodologiesEndpoint = API_URL + "/methodologies";
@@ -108,11 +108,22 @@ exports.load = function() {
                 var slug = module.slug;
                 var simpleId = slug.replace(/-/ig, '');
                 module.simple_id = simpleId;
+                // Inflate the related stuff to make things easier
+                _.each(["methodologies","principles","stories","theories", "tactics"], function(related) {
+                    var rel_slugs = module[related];
+                    module[related] = [];
+                    _.each(rel_slugs, function(s) {
+                        //console.log(s);
+                        var rel_module = _.findWhere(modulesNoId, {slug: s });
+                        //console.log(rel_module);
+                        module[related].push(rel_module);
+                    });
+                });
                 return module;
             });
-            modules = _.reject(modulesAll, function(module) { 
+            modules = _.reject(modulesAll, function(module) {
                     // Get rid of snapshots and gallery entries
-                    return module['module-type'] === 'snapshot';
+                    return module['module-type'] === 'snapshot' || module['module-type'] === 'gallery';
             });
             console.debug("We have " + modules.length + " modules");
     });
@@ -259,6 +270,7 @@ var processMessage = function(api, event, record) {
             source = text['action-module-read-more'];
             source = utils.ensureString(source);
         }
+        console.log(source);
         var showFull = utils.checkForFull(module);
         template = Handlebars.compile(source);
         replyText = template({ "event": event, "config": "", "user": user, "command": command, "module": module, "text": text, "full": showFull });
@@ -319,19 +331,22 @@ var processMessage = function(api, event, record) {
         var moduleName = slug.replace(readRegex, '$1');
         var module = _.findWhere(modules, { simple_id: moduleName });
         var more;
+        var related;
         var full;
         // Do we even have a module to work with?
         if ( module === undefined ) {
             source = text['error-no-current-module'];
         } else {
             more = utils.checkForMore(module);
+            related = utils.checkForRelated(module);
+            console.log(related);
             full = utils.checkForFull(module);
             user.currentModule = { "name": module.title, "simple_id": command + "read" + module.simple_id };
             source = text['action-module-read'];
         }
         source = utils.ensureString(source);
         template = Handlebars.compile(source);
-        replyText = template({ "event": event, "config": "", "user": user, "command": command, "module": module, "more": more, "full": full, "text": text});
+        replyText = template({ "event": event, "config": "", "user": user, "command": command, "module": module, "more": more, "related": related, "full": full, "text": text});
     } if ( replyText !== '' ) {
         //=================================================================
         // If there's a replyText string, send it to the user
