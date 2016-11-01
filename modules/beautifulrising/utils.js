@@ -23,6 +23,13 @@ exports.checkForMore = function(module) {
     }
 };
 
+exports.checkForRelated = function(module) {
+    // methodologies","principles","stories","theories", "tactics
+    if ( module.methodologies !== undefined || module.principles !== undefined || module.stories !== undefined || module.theories !== undefined || module.tactics !== undefined ) {
+        return module;
+    }
+};
+
 exports.checkForFull = function(module) {
     if ( module['full-write-up'] !== undefined ) {
         // TODO remove this when the docs are fixed
