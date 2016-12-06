@@ -312,7 +312,7 @@ var processMessage = function(api, event, record) {
         //=================================================================
         //var typePlural = argument.replace(/\command/, '');
         var typePlural =  argument.substring(1);
-        var type = config.relationships[typePlural];
+        var type = config['singular-name-for-type'][typePlural];
         var filteredModules = _.filter(modules, function(module){ return module.type === type; });
         var count = filteredModules.length;
         source = text['iterator-module-list'];
